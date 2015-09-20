@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip"
+    android:background="#454441"
+    android:id="@+id/building_list" >
+	
+    <!-- Thumbnail Image -->
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp" />
+    
+    <!-- <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="6dip"
+        android:contentDescription="@string/imageView" /> -->
+
+    <TextView
+        android:id="@+id/firstLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/firstLine"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@+drawable/grey"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toRightOf="@id/thumbnail"
+        android:gravity="center_vertical"
+        android:textSize="16sp" />
+    
+     <TextView
+         android:id="@+id/secondLine"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:layout_below="@id/firstLine"
+         android:layout_toRightOf="@id/thumbnail"
+         android:ellipsize="marquee"
+         android:singleLine="true"
+         android:textColor="@+drawable/white"
+         android:textSize="12sp" />
+     
+      <TextView
+        android:id="@+id/thirdLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/thumbnail"
+        android:layout_below="@id/secondLine"
+        android:textColor="@+drawable/white"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:textSize="12sp" />
+
+</RelativeLayout> 
