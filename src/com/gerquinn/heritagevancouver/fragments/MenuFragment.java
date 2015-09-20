@@ -54,7 +54,6 @@ public class MenuFragment extends Fragment {
 					
 				});
 				
-				
 				searchNearbyImage.setOnClickListener(new View.OnClickListener(){
 					
 					@Override
@@ -81,19 +80,19 @@ public class MenuFragment extends Fragment {
 				
 				/*mapImage.setOnClickListener(new View.OnClickListener() {
 					
-					@Override
-					public void onClick(View arg0) {
-						MapLoad();
-					}
-				});
+				@Override
+				public void onClick(View arg0) {
+					MapLoad();
+				}
+			});
 				
-				virtualImage.setOnClickListener(new View.OnClickListener() {
+			virtualImage.setOnClickListener(new View.OnClickListener() {
 					
-					@Override
-					public void onClick(View arg0) {
-						//TODO
-					}
-				});*/
+			@Override
+			public void onClick(View arg0) {
+				//TODO
+			}
+		});*/
 				
 		return lLayout;
 	}
@@ -182,31 +181,31 @@ public class MenuFragment extends Fragment {
 	}
 	
 	/**
-	    * Load the Map Activity
-	    * */
-		private void BuildingListLoad(){
+	* Load the Map Activity
+	* */
+	private void BuildingListLoad(){
 			
-			// Start your map activity
-			//Intent i = new Intent(MainActivity.this, MapActivity.class);
-			//Intent i = new Intent(MainActivity.this, WestHastingsActivity.class);
-			//startActivity(i);
-		}
+		// Start your map activity
+		//Intent i = new Intent(MainActivity.this, MapActivity.class);
+		//Intent i = new Intent(MainActivity.this, WestHastingsActivity.class);
+		//startActivity(i);
+	}
 		
-		/**
-	     * Launching new Location Found activity
-	     * */
-		private void SearchNearby(){
-			//Intent i = new Intent(MainActivity.this, LocationFound.class);
-			Intent i = new Intent(getActivity(), SearchNearbyActivity.class);
-			i.putExtra("databaseName","heritage_14");
-			i.putExtra("tableName","all_buildings");
-			startActivity(i);
-		}
+	/**
+	* Launching new Location Found activity
+	* */
+	private void SearchNearby(){
+		//Intent i = new Intent(MainActivity.this, LocationFound.class);
+		Intent i = new Intent(getActivity(), SearchNearbyActivity.class);
+		i.putExtra("databaseName","heritage_14");
+		i.putExtra("tableName","all_buildings");
+		startActivity(i);
+	}
 		
-		private void CameraLoad(){
-			Intent i = new Intent(getActivity(), CapturePhotoActivity.class);
-			startActivity(i);
-		}
+	private void CameraLoad(){
+		Intent i = new Intent(getActivity(), CapturePhotoActivity.class);
+		startActivity(i);
+	}
 	
 	/**
 	* Load the Walking Tours Activity
