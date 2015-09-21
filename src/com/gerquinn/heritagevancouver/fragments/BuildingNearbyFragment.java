@@ -1,19 +1,24 @@
-package com.gerquinn.heritagevancouver;
+package com.gerquinn.heritagevancouver.fragments;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
 import android.location.Location;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.gerquinn.heritagevancouver.database.DatabaseHandler;
+import com.gerquinn.heritagevancouver.R;
 import com.gerquinn.heritagevancouver.database.BuildingConstructors;
+import com.gerquinn.heritagevancouver.database.DatabaseHandler;
 import com.gerquinn.heritagevancouver.location.GPSTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -28,10 +33,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class BuildingNearbyActivity extends Activity implements
-		LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener {
-
+public class BuildingNearbyFragment extends Fragment implements LocationListener, GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener{
+	
 	private GoogleMap googleMap;
 
 	// Address, Latitude & Longitude
@@ -45,6 +49,7 @@ public class BuildingNearbyActivity extends Activity implements
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
 	Toast toast;
+	public Context context;
 	CharSequence text;
 	int duration = Toast.LENGTH_SHORT;
 
@@ -59,7 +64,7 @@ public class BuildingNearbyActivity extends Activity implements
 
 	public void buildingListSetup() {
 
-		DatabaseHandler db = new DatabaseHandler(this);
+		DatabaseHandler db = new DatabaseHandler(context);
 		List<BuildingConstructors> westHastings = db.getAllBuildings();
 
 		for (BuildingConstructors wh : westHastings) {
@@ -104,7 +109,7 @@ public class BuildingNearbyActivity extends Activity implements
 		 */
 
 		// check if GPS enabled
-		GPSTracker gpsTracker = new GPSTracker(this);
+		GPSTracker gpsTracker = new GPSTracker(context);
 
 		if (gpsTracker.canGetLocation()) {
 			latitude = gpsTracker.latitude;
@@ -122,7 +127,7 @@ public class BuildingNearbyActivity extends Activity implements
 	private void initilizeMap() {
 
 		if (googleMap == null) {
-			googleMap = ((MapFragment) getFragmentManager().findFragmentById(
+			googleMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			// SupportMapFragment mapFrag = (SupportMapFragment)
 			// getFragmentManager()
@@ -132,7 +137,7 @@ public class BuildingNearbyActivity extends Activity implements
 
 			// Check if map is created successfully or not
 			if (googleMap == null) {
-				Toast.makeText(getApplicationContext(),
+				Toast.makeText(context,
 						"Sorry! Unable to create maps", Toast.LENGTH_SHORT)
 						.show();
 			}
@@ -168,7 +173,7 @@ public class BuildingNearbyActivity extends Activity implements
 			text = buildingCount + " Buildings found";
 		}
 
-		Context context = getApplicationContext();
+		Context context = getActivity().getApplicationContext();
 		toast = Toast.makeText(context, text, duration);
 		toast.show();
 
@@ -192,7 +197,7 @@ public class BuildingNearbyActivity extends Activity implements
 	@Override
 	public void onConnected(Bundle arg0) {
 		// Display the connection status
-		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
 
 	}
 
@@ -206,7 +211,7 @@ public class BuildingNearbyActivity extends Activity implements
 		if (connectionResult.hasResolution()) {
 			try {
 				// Start an Activity that tries to resolve the error
-				connectionResult.startResolutionForResult(this,
+				connectionResult.startResolutionForResult(getActivity(),
 						CONNECTION_FAILURE_RESOLUTION_REQUEST);
 				/*
 				 * Thrown if Google Play services canceled the original
@@ -224,17 +229,18 @@ public class BuildingNearbyActivity extends Activity implements
 			// showErrorDialog(connectionResult.getErrorCode());
 		}
 	}
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_maps);
-
+	
+	//@Override
+	public View onCreatView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		//Inflate the layout for this fragment
+		LinearLayout lLayout = (LinearLayout) inflater.inflate(R.layout.activity_maps, container, false);
+		
+		context = getActivity().getApplicationContext();
 		getCoordinates();
 		buildingListSetup();
 
 		// try {
-		MapsInitializer.initialize(getApplicationContext());
+		MapsInitializer.initialize(context);
 		/*
 		 * } catch (GooglePlayServicesNotAvailableException e) {
 		 * e.printStackTrace(); }
@@ -246,19 +252,21 @@ public class BuildingNearbyActivity extends Activity implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+			
+		return lLayout;
 	}
-
-	@Override
+	
+	//@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.maps, menu);
+		getActivity().getMenuInflater().inflate(R.menu.maps, menu);
 		return true;
 	}
 
 	@Override
 	public void onDisconnected() {
 		// Display the connection status
-		Toast.makeText(this, "Disconnected. Please re-connect.",
+		Toast.makeText(context, "Disconnected. Please re-connect.",
 				Toast.LENGTH_SHORT).show();
 
 	}
@@ -269,7 +277,7 @@ public class BuildingNearbyActivity extends Activity implements
 
 	}
 
-	@Override
+	/*@Override
 	protected void onResume() {
 		super.onResume();
 		initilizeMap();
@@ -288,6 +296,6 @@ public class BuildingNearbyActivity extends Activity implements
 		// mLocationClient.disconnect();
 		super.onStop();
 
-	}
+	}*/
 
 }
