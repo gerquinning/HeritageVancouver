@@ -57,24 +57,14 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
     }
 
     @Override
-    public final View getView(int position, View convertView, ViewGroup parent) {
-        // This provides the View for the Selected Item in the Spinner, not
-        // the dropdown (unless dropdownView is not set).
-        if (position == 0) {
-            return getNothingSelectedView(parent);
-        }
-        return adapter.getView(position - EXTRA, null, parent); // Could re-use
-                                                 // the convertView if possible.
+    public boolean areAllItemsEnabled() {
+        return false;
     }
 
-    /**
-     * View to show in Spinner with Nothing Selected
-     * Override this to do something dynamic... e.g. "37 Options Found"
-     * @param parent
-     * @return
-     */
-    protected View getNothingSelectedView(ViewGroup parent) {
-        return layoutInflater.inflate(nothingSelectedLayout, parent, false);
+    @Override
+    public int getCount() {
+        int count = adapter.getCount();
+        return count == 0 ? 0 : count + EXTRA;
     }
 
     @Override
@@ -91,25 +81,14 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
         return adapter.getDropDownView(position - EXTRA, null, parent);
     }
 
-    /**
-     * Override this to do something dynamic... For example, "Pick your favorite
-     * of these 37".
-     * @param parent
-     * @return
-     */
-    protected View getNothingSelectedDropdownView(ViewGroup parent) {
-        return layoutInflater.inflate(nothingSelectedDropdownLayout, parent, false);
-    }
-
-    @Override
-    public int getCount() {
-        int count = adapter.getCount();
-        return count == 0 ? 0 : count + EXTRA;
-    }
-
     @Override
     public Object getItem(int position) {
         return position == 0 ? null : adapter.getItem(position - EXTRA);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return adapter.getItemId(position - EXTRA);
     }
 
     @Override
@@ -123,14 +102,40 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
                adapter.getItemViewType(position - EXTRA);
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return adapter.getViewTypeCount() + EXTRA;
+    /**
+     * Override this to do something dynamic... For example, "Pick your favorite
+     * of these 37".
+     * @param parent
+     * @return
+     */
+    protected View getNothingSelectedDropdownView(ViewGroup parent) {
+        return layoutInflater.inflate(nothingSelectedDropdownLayout, parent, false);
+    }
+
+    /**
+     * View to show in Spinner with Nothing Selected
+     * Override this to do something dynamic... e.g. "37 Options Found"
+     * @param parent
+     * @return
+     */
+    protected View getNothingSelectedView(ViewGroup parent) {
+        return layoutInflater.inflate(nothingSelectedLayout, parent, false);
     }
 
     @Override
-    public long getItemId(int position) {
-        return adapter.getItemId(position - EXTRA);
+    public final View getView(int position, View convertView, ViewGroup parent) {
+        // This provides the View for the Selected Item in the Spinner, not
+        // the dropdown (unless dropdownView is not set).
+        if (position == 0) {
+            return getNothingSelectedView(parent);
+        }
+        return adapter.getView(position - EXTRA, null, parent); // Could re-use
+                                                 // the convertView if possible.
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return adapter.getViewTypeCount() + EXTRA;
     }
 
     @Override
@@ -144,6 +149,12 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
     }
 
     @Override
+    public boolean isEnabled(int position) {
+        return position == 0 ? false : true; // Don't allow the 'nothing selected'
+                                             // item to be picked.
+    }
+
+    @Override
     public void registerDataSetObserver(DataSetObserver observer) {
         adapter.registerDataSetObserver(observer);
     }
@@ -151,17 +162,6 @@ public class NothingSelectedSpinnerAdapter implements SpinnerAdapter, ListAdapte
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
         adapter.unregisterDataSetObserver(observer);
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return position == 0 ? false : true; // Don't allow the 'nothing selected'
-                                             // item to be picked.
     }
 
 }

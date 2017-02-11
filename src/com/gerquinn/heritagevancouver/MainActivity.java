@@ -31,17 +31,6 @@ public class MainActivity extends Activity{
 		//startActivity(i);
 	}
 	
-	/**
-     * Launching new Location Found activity
-     * */
-	private void SearchNearby(){
-		//Intent i = new Intent(MainActivity.this, LocationFound.class);
-		Intent i = new Intent(MainActivity.this, SearchNearbyActivity.class);
-		i.putExtra("databaseName","heritage_14");
-		i.putExtra("tableName","all_buildings");
-		startActivity(i);
-	}
-	
 	private void CameraLoad(){
 		Intent i = new Intent(MainActivity.this, CapturePhotoActivity.class);
 		startActivity(i);
@@ -197,6 +186,17 @@ public class MainActivity extends Activity{
 		}else {
 			return super.onOptionsItemSelected(item);
 		}*/
+	}
+	
+	/**
+     * Launching new Location Found activity
+     * */
+	private void SearchNearby(){
+		//Intent i = new Intent(MainActivity.this, LocationFound.class);
+		Intent i = new Intent(MainActivity.this, SearchNearbyActivity.class);
+		i.putExtra("databaseName","heritage_14");
+		i.putExtra("tableName","all_buildings");
+		startActivity(i);
 	}
 	
 	/**

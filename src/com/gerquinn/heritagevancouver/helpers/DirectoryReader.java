@@ -10,12 +10,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import com.gerquinn.heritagevancouver.CapturePhotoActivity;
 import com.gerquinn.heritagevancouver.RemoteImageGalleryActivity;
 import com.gerquinn.heritagevancouver.adapters.RemoteGridViewAdapter;
-
-import android.os.AsyncTask;
-import android.util.Log;
 
 public class DirectoryReader extends AsyncTask<String, Void, String>{
 	
@@ -54,16 +54,16 @@ public class DirectoryReader extends AsyncTask<String, Void, String>{
 		return null;
 	}
 	
+	@Override
+	protected void onPostExecute(String result){
+		super.onPostExecute(result);
+	}
+	
 	/**
 	 * Before starting background thread Show Progress Dialog
 	 * */
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-	}
-	
-	@Override
-	protected void onPostExecute(String result){
-		super.onPostExecute(result);
 	}
 }

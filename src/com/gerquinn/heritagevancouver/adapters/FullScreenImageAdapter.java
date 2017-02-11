@@ -2,10 +2,6 @@ package com.gerquinn.heritagevancouver.adapters;
 
 import java.util.ArrayList;
 
-import com.gerquinn.heritagevancouver.R;
-import com.gerquinn.heritagevancouver.UploadPictureActivity;
-import com.gerquinn.heritagevancouver.helpers.TouchImageView;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +16,10 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.gerquinn.heritagevancouver.R;
+import com.gerquinn.heritagevancouver.UploadPictureActivity;
+import com.gerquinn.heritagevancouver.helpers.TouchImageView;
+
 public class FullScreenImageAdapter extends PagerAdapter{
 	private Activity activity;
 	private ArrayList<String> imagePaths;
@@ -33,10 +33,20 @@ public class FullScreenImageAdapter extends PagerAdapter{
 		this.imagePaths = imagePaths;
 	}
 	
+	@Override
+	public void destroyItem(ViewGroup container, int position, Object object){
+		((ViewPager) container).removeView((RelativeLayout) object);
+	}
+	
 	public Bitmap getBitmap(){
 		return bitmap;
 	}
 	
+	@Override
+	public int getCount() {
+		return this.imagePaths.size();
+	}
+
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position){
 		TouchImageView imgDisplay;
@@ -84,16 +94,6 @@ public class FullScreenImageAdapter extends PagerAdapter{
 		
 		((ViewPager) container).addView(viewLayout);
 		return viewLayout;
-	}
-	
-	@Override
-	public void destroyItem(ViewGroup container, int position, Object object){
-		((ViewPager) container).removeView((RelativeLayout) object);
-	}
-
-	@Override
-	public int getCount() {
-		return this.imagePaths.size();
 	}
 
 	@Override

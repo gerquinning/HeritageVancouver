@@ -17,19 +17,19 @@ public class DatabaseFunctions {
 	public static ArrayList<Double> longitudeArray = new ArrayList<Double>();
 	public static ArrayList<String> areaArray = new ArrayList<String>();
 	
+	public static void setArrays(String address, String buildingName, double latitude, double longitude, String buildingType, String area){
+		// Adding each value to the ArrayLists
+		addressArray.add(address);
+		buildingNameArray.add(buildingName);
+		latitudeArray.add(latitude);
+		longitudeArray.add(longitude);
+		buildingTypeArray.add(buildingType);
+		areaArray.add(area);
+	}
+	
 	//Empty Constructor
 	public DatabaseFunctions(){
 		
-	}
-	
-	public DatabaseFunctions(String id, String buildingName, String buildingType, String address, double latitude, double longitude, String area){
-		this._id = id;
-		this._buildingName = buildingName;
-		this._buildingType = buildingType;
-		this._address = address;
-		this._latitude = latitude;
-		this._longitude = longitude;
-		this._area = area;
 	}
 	
 	public DatabaseFunctions(String address, String buildingName, double latitude, double longitude, String buildingType, String area){
@@ -41,18 +41,22 @@ public class DatabaseFunctions {
 		this._area = area;
 	}
 	
-	public static void setArrays(String address, String buildingName, double latitude, double longitude, String buildingType, String area){
-		// Adding each value to the ArrayLists
-		addressArray.add(address);
-		buildingNameArray.add(buildingName);
-		latitudeArray.add(latitude);
-		longitudeArray.add(longitude);
-		buildingTypeArray.add(buildingType);
-		areaArray.add(area);
+	public DatabaseFunctions(String id, String buildingName, String buildingType, String address, double latitude, double longitude, String area){
+		this._id = id;
+		this._buildingName = buildingName;
+		this._buildingType = buildingType;
+		this._address = address;
+		this._latitude = latitude;
+		this._longitude = longitude;
+		this._area = area;
 	}
 
 	public String get_address() {
 		return _address;
+	}
+
+	public String get_area() {
+		return _area;
 	}
 
 	public String get_buildingName() {
@@ -61,10 +65,6 @@ public class DatabaseFunctions {
 
 	public String get_buildingType() {
 		return _buildingType;
-	}
-
-	public String get_area() {
-		return _area;
 	}
 
 	public String get_id() {
@@ -83,8 +83,16 @@ public class DatabaseFunctions {
 		return addressArray;
 	}
 
+	public ArrayList<String> getArea() {
+		return areaArray;
+	}
+
 	public ArrayList<String> getBuildingNameArray() {
 		return buildingNameArray;
+	}
+
+	public ArrayList<String> getBuildingTypeArray() {
+		return buildingTypeArray;
 	}
 
 	public ArrayList<Double> getLatitudeArray() {
@@ -95,16 +103,12 @@ public class DatabaseFunctions {
 		return longitudeArray;
 	}
 
-	public ArrayList<String> getBuildingTypeArray() {
-		return buildingTypeArray;
-	}
-
-	public ArrayList<String> getArea() {
-		return areaArray;
-	}
-
 	public void set_address(String _address) {
 		this._address = _address;
+	}
+
+	public void set_area(String _area) {
+		this._area = _area;
 	}
 
 	public void set_buildingName(String _buildingName) {
@@ -113,10 +117,6 @@ public class DatabaseFunctions {
 
 	public void set_buildingType(String _buildingType) {
 		this._buildingType = _buildingType;
-	}
-
-	public void set_area(String _area) {
-		this._area = _area;
 	}
 
 	public void set_id(String _id) {

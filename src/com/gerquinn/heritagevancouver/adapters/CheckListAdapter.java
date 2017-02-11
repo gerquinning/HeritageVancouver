@@ -3,8 +3,6 @@ package com.gerquinn.heritagevancouver.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.gerquinn.heritagevancouver.R;
-
 import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.view.LayoutInflater;
@@ -15,14 +13,21 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.gerquinn.heritagevancouver.R;
+
 public class CheckListAdapter extends ArrayAdapter<String>{
 	
+	private class ViewHolder{
+		TextView addressName;
+		CheckBox ck1;
+	}
 	List <PackageInfo> packageList;
 	ArrayList <String> addressArray;
 	Activity context;
 	boolean[] itemChecked;
 	TextView addressName;
 	CheckBox ck1;
+	
 	Button btnUpload;
 	
 	public CheckListAdapter(Activity context, ArrayList <String> addressArray){
@@ -30,11 +35,6 @@ public class CheckListAdapter extends ArrayAdapter<String>{
 		this.context = context;
 		this.addressArray = addressArray;
 		itemChecked = new boolean[addressArray.size()];
-	}
-	
-	private class ViewHolder{
-		TextView addressName;
-		CheckBox ck1;
 	}
 	
 	@Override

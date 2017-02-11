@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.gerquinn.heritagevancouver.database.DatabaseHandler;
 import com.gerquinn.heritagevancouver.database.BuildingConstructors;
+import com.gerquinn.heritagevancouver.database.DatabaseHandler;
 import com.gerquinn.heritagevancouver.location.GPSTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;

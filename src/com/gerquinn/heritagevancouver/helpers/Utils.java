@@ -74,16 +74,6 @@ public class Utils {
 		return filePaths;
 	}
 	
-	//Check supported file Extensions
-	private boolean IsSupportedFile(String filePath){
-		String ext = filePath.substring((filePath.lastIndexOf(".") + 1), filePath.length());
-		
-		if(FILE_EXTN.contains(ext.toLowerCase(Locale.getDefault())))
-			return true;
-		else
-			return false;
-	}
-	
 	//Getting Screen Width
 	public int getScreenWidth(){
 		int columnWidth;
@@ -99,6 +89,16 @@ public class Utils {
 		}
 		columnWidth = point.x;
 		return columnWidth;
+	}
+	
+	//Check supported file Extensions
+	private boolean IsSupportedFile(String filePath){
+		String ext = filePath.substring((filePath.lastIndexOf(".") + 1), filePath.length());
+		
+		if(FILE_EXTN.contains(ext.toLowerCase(Locale.getDefault())))
+			return true;
+		else
+			return false;
 	}
 
 }

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import com.gerquinn.heritagevancouver.R;
-
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -20,6 +18,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+
+import com.gerquinn.heritagevancouver.R;
 
 /**
  * Create this Class from tutorial : 

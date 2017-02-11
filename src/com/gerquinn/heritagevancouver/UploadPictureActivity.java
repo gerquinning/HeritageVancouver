@@ -9,49 +9,55 @@ package com.gerquinn.heritagevancouver;
 
 import java.util.ArrayList;
 
-import com.gerquinn.heritagevancouver.adapters.CheckListAdapter;
-import com.gerquinn.heritagevancouver.database.DatabaseFunctions;
-import com.gerquinn.heritagevancouver.helpers.PictureGeoTagging;
-import com.gerquinn.heritagevancouver.helpers.UploadTask;
-
 import android.app.Activity;
-import android.view.View;
-import android.view.ViewGroup;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.gerquinn.heritagevancouver.adapters.CheckListAdapter;
+import com.gerquinn.heritagevancouver.database.DatabaseFunctions;
+import com.gerquinn.heritagevancouver.helpers.PictureGeoTagging;
+import com.gerquinn.heritagevancouver.helpers.UploadTask;
+
 public class UploadPictureActivity extends Activity{
 	
+	/*
+	 * Get the Context
+	 */
+	public static Context getContext() {
+	    return mContext;
+	}
 	Uri uriFile;
 	String fileUri = "";
 	protected String[] fileNameArray;
 	String last_item = "";
 	double latitude, longitude, imgLatitude, imgLongitude = 0;
 	String address;
+	
 	int uploadNum;
 	
 	//Get Values from all_buildings Table in Database
 	DatabaseFunctions databaseFunctions = new DatabaseFunctions();
-	
-	PictureGeoTagging picGeoTag = new PictureGeoTagging();
     
+    PictureGeoTagging picGeoTag = new PictureGeoTagging();
     public String DB_NAME = "heritage_14";
-    public String TABLE_NAME = "all_buildings";
     
+	public String TABLE_NAME = "all_buildings";
 	public ArrayList<String> addressArray = new ArrayList<String>();
 	public ArrayList<String> latitudeArray = new ArrayList<String>();
-	public ArrayList<String> longitudeArray = new ArrayList<String>();
 	
+	public ArrayList<String> longitudeArray = new ArrayList<String>();
 	public ListView L1;
 	CheckListAdapter adapter;
 	CheckBox checkBox;
@@ -60,7 +66,29 @@ public class UploadPictureActivity extends Activity{
 	public ImageView thumb;
 	PackageManager packageManager;
 	private Activity activity;
+	
 	public static Context mContext;
+	
+	/**
+	 * Gets the buildings that are near to where the image was taken
+	 */
+	public void addressListSetup() {
+		for (int i = 0; i < databaseFunctions.getLatitudeArray().size(); i++) {
+			latitude = Double.valueOf(databaseFunctions.getLatitudeArray().get(i));
+			longitude = Double.valueOf(databaseFunctions.getLongitudeArray().get(i));
+			
+			double latDiff = imgLatitude - latitude;
+			double lonDiff = imgLongitude - longitude;
+			
+			if((latDiff <=  0.001 && latDiff >=  -0.001) && (lonDiff <= 0.0034 && lonDiff >=  -0.0034)){
+				String[] splitAddressArray = databaseFunctions.getAddressArray().get(i).split(",");
+				String splitAddressString = splitAddressArray[0];
+				addressArray.add(splitAddressString);
+				latitudeArray.add(String.valueOf(latitude));
+				longitudeArray.add(String.valueOf(longitude));
+			}
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
@@ -134,18 +162,6 @@ public class UploadPictureActivity extends Activity{
 		
 	}
 	
-	@Override
-	public void onResume(){
-		super.onResume();
-	}
-	
-	/*
-	 * Get the Context
-	 */
-	public static Context getContext() {
-	    return mContext;
-	}
-	
 	/*public static class AddressViewHolder{
 		private CheckBox checkBox ;  
 	    private TextView textView ;  
@@ -168,24 +184,8 @@ public class UploadPictureActivity extends Activity{
 	    }
 	}*/
 	
-	/**
-	 * Gets the buildings that are near to where the image was taken
-	 */
-	public void addressListSetup() {
-		for (int i = 0; i < databaseFunctions.getLatitudeArray().size(); i++) {
-			latitude = Double.valueOf(databaseFunctions.getLatitudeArray().get(i));
-			longitude = Double.valueOf(databaseFunctions.getLongitudeArray().get(i));
-			
-			double latDiff = imgLatitude - latitude;
-			double lonDiff = imgLongitude - longitude;
-			
-			if((latDiff <=  0.001 && latDiff >=  -0.001) && (lonDiff <= 0.0034 && lonDiff >=  -0.0034)){
-				String[] splitAddressArray = databaseFunctions.getAddressArray().get(i).split(",");
-				String splitAddressString = splitAddressArray[0];
-				addressArray.add(splitAddressString);
-				latitudeArray.add(String.valueOf(latitude));
-				longitudeArray.add(String.valueOf(longitude));
-			}
-		}
+	@Override
+	public void onResume(){
+		super.onResume();
 	}
 }

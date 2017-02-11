@@ -28,137 +28,6 @@ import com.gerquinn.heritagevancouver.helpers.JSONParser;
 
 public class BuildingListActivity extends Activity {
 
-	//List that takes details from Walking Tour Database
-	private List<WalkingTourItems> walkingTourItems = new ArrayList<WalkingTourItems>();
-	
-	private static final String MYLISTKEY = "myListLabels";
-    
-    // Progress Dialog
-    private ProgressDialog pDialog;
-	
-	// Creating JSON Parser object
-    JSONParser jParser = new JSONParser();
- 
-    // url to get all products list
-    private static String url_all_buildings = "http://quinntechssential.com/heritage_vancouver/databases/android_connect/get_all_buildings.php";
-    // JSON Node names
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_BUILDINGS = "buildings";
-    
-    public String DB_NAME;
-    public String TABLE_NAME;
-    
-    private static final String TAG_BUILDING_NAME = "building_name";
-    private static final String TAG_BUILDING_YEAR = "building_year";
-    private static final String TAG_BUILDING_TYPE = "building_type";
-    private static final String TAG_BUILDING_ADDRESS = "address";
-    private static final String TAG_BUILDING_LATITUDE = "latitude";
-    private static final String TAG_BUILDING_LONGITUDE = "longitude";
-    private static final String TAG_BUILDING_DESCRIPTION = "description";
-    private static final String TAG_IMAGE_URL = "image_url";
-    private static final String TAG_THUMB_URL = "thumb_url";
-    
-    private ArrayList<String> buildingNameArray, buildingYearArray, buildingTypeArray, addressArray, latitudeArray, longitudeArray, descriptionArray, imageUrlArray;
-    
-    // products JSONArray
-    JSONArray buildings = null;
-	
-	public String thumb_url, last_item = "";
-	public ListView L1;
-	public ImageView thumb;
-	Button footerButton;
-	public BuildingDetailsActivity bda;
-	public static BuildingListActivity bla;
-	private WalkingTourMapActivity wta;
-	
-	Activity activity;
-	
-	public CustomListAdapter myadp;
-	
-	public static Context mContext;
-	Toast toast;
-    
-	@Override
-	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_building_lists);
-		mContext = this;
-		activity = this;
-		
-		DB_NAME = getIntent().getExtras().getString("databaseName");
-		TABLE_NAME= getIntent().getExtras().getString("tableName");
-		
-		// Loading products in Background Thread
-        new LoadAllBuildings().execute();
-		
-		/**
-         * Updating parsed JSON data into ListView
-         * */
-		L1 = (ListView)findViewById(R.id.list1);
-	    myadp = new CustomListAdapter(activity,walkingTourItems);
-		L1.setAdapter(myadp);
-		
-		L1.setOnItemClickListener(new OnItemClickListener(){
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int num, long lnum){
-				
-				Intent i = new Intent(BuildingListActivity.this, BuildingDetailsActivity.class);
-				i.putExtra("buildingName", walkingTourItems.get(num).getBuildingName());
-				i.putExtra("buildingType", walkingTourItems.get(num).getBuildingType());
-				i.putExtra("buildingYear", walkingTourItems.get(num).getYear());
-				i.putExtra("address", walkingTourItems.get(num).getAddress());
-				i.putExtra("latitude", walkingTourItems.get(num).getLatitude());
-				i.putExtra("longitude", walkingTourItems.get(num).getLongitude());
-				i.putExtra("description", walkingTourItems.get(num).getDescription());
-				i.putExtra("imageUrl", walkingTourItems.get(num).getImageUrl());
-				startActivity(i);
-			}
-		});
-	
-	}
-	
-	@Override
-	public void onResume(){
-		super.onResume();
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle savedState){
-		super.onSaveInstanceState(savedState);
-		
-	}
-	
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-	    return myadp;
-	}
-	
-	public static Context getContext() {
-	    return mContext;
-	}
-	
-	public void setArrays(){
-		buildingNameArray = new ArrayList<String>();
-		buildingYearArray = new ArrayList<String>();
-		buildingTypeArray = new ArrayList<String>();
-		addressArray = new ArrayList<String>();
-		latitudeArray = new ArrayList<String>();
-		longitudeArray = new ArrayList<String>();
-		descriptionArray = new ArrayList<String>();
-		imageUrlArray = new ArrayList<String>();
-		
-		for(int i = 0; i <= walkingTourItems.size() - 1; i++){
-			buildingNameArray.add(walkingTourItems.get(i).getBuildingName());
-			buildingYearArray.add(String.valueOf(walkingTourItems.get(i).getYear()));
-			buildingTypeArray.add(walkingTourItems.get(i).getBuildingType());
-			addressArray.add(walkingTourItems.get(i).getAddress());
-			latitudeArray.add(String.valueOf(walkingTourItems.get(i).getLatitude()));
-			longitudeArray.add(String.valueOf(walkingTourItems.get(i).getLongitude()));
-			descriptionArray.add(walkingTourItems.get(i).getDescription());
-			imageUrlArray.add(walkingTourItems.get(i).getImageUrl());
-		}
-	}
-	
 	/**
      * Background Async Task to Load all product by making HTTP Request
      * */
@@ -278,5 +147,136 @@ public class BuildingListActivity extends Activity {
         	pDialog.setCancelable(false);
         	pDialog.show();
         }
+	}
+	
+	//List that takes details from Walking Tour Database
+	private List<WalkingTourItems> walkingTourItems = new ArrayList<WalkingTourItems>();
+    
+    private static final String MYLISTKEY = "myListLabels";
+	
+	// Progress Dialog
+    private ProgressDialog pDialog;
+ 
+    // Creating JSON Parser object
+    JSONParser jParser = new JSONParser();
+    // url to get all products list
+    private static String url_all_buildings = "http://quinntechssential.com/heritage_vancouver/databases/android_connect/get_all_buildings.php";
+    // JSON Node names
+    private static final String TAG_SUCCESS = "success";
+    
+    private static final String TAG_BUILDINGS = "buildings";
+    public String DB_NAME;
+    
+    public String TABLE_NAME;
+    private static final String TAG_BUILDING_NAME = "building_name";
+    private static final String TAG_BUILDING_YEAR = "building_year";
+    private static final String TAG_BUILDING_TYPE = "building_type";
+    private static final String TAG_BUILDING_ADDRESS = "address";
+    private static final String TAG_BUILDING_LATITUDE = "latitude";
+    private static final String TAG_BUILDING_LONGITUDE = "longitude";
+    private static final String TAG_BUILDING_DESCRIPTION = "description";
+    private static final String TAG_IMAGE_URL = "image_url";
+    
+    private static final String TAG_THUMB_URL = "thumb_url";
+    
+    private ArrayList<String> buildingNameArray, buildingYearArray, buildingTypeArray, addressArray, latitudeArray, longitudeArray, descriptionArray, imageUrlArray;
+	
+	// products JSONArray
+    JSONArray buildings = null;
+	public String thumb_url, last_item = "";
+	public ListView L1;
+	public ImageView thumb;
+	Button footerButton;
+	public BuildingDetailsActivity bda;
+	public static BuildingListActivity bla;
+	
+	private WalkingTourMapActivity wta;
+	
+	Activity activity;
+	
+	public CustomListAdapter myadp;
+	public static Context mContext;
+    
+	public static Context getContext() {
+	    return mContext;
+	}
+	
+	Toast toast;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_building_lists);
+		mContext = this;
+		activity = this;
+		
+		DB_NAME = getIntent().getExtras().getString("databaseName");
+		TABLE_NAME= getIntent().getExtras().getString("tableName");
+		
+		// Loading products in Background Thread
+        new LoadAllBuildings().execute();
+		
+		/**
+         * Updating parsed JSON data into ListView
+         * */
+		L1 = (ListView)findViewById(R.id.list1);
+	    myadp = new CustomListAdapter(activity,walkingTourItems);
+		L1.setAdapter(myadp);
+		
+		L1.setOnItemClickListener(new OnItemClickListener(){
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int num, long lnum){
+				
+				Intent i = new Intent(BuildingListActivity.this, BuildingDetailsActivity.class);
+				i.putExtra("buildingName", walkingTourItems.get(num).getBuildingName());
+				i.putExtra("buildingType", walkingTourItems.get(num).getBuildingType());
+				i.putExtra("buildingYear", walkingTourItems.get(num).getYear());
+				i.putExtra("address", walkingTourItems.get(num).getAddress());
+				i.putExtra("latitude", walkingTourItems.get(num).getLatitude());
+				i.putExtra("longitude", walkingTourItems.get(num).getLongitude());
+				i.putExtra("description", walkingTourItems.get(num).getDescription());
+				i.putExtra("imageUrl", walkingTourItems.get(num).getImageUrl());
+				startActivity(i);
+			}
+		});
+	
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+	    return myadp;
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedState){
+		super.onSaveInstanceState(savedState);
+		
+	}
+	
+	public void setArrays(){
+		buildingNameArray = new ArrayList<String>();
+		buildingYearArray = new ArrayList<String>();
+		buildingTypeArray = new ArrayList<String>();
+		addressArray = new ArrayList<String>();
+		latitudeArray = new ArrayList<String>();
+		longitudeArray = new ArrayList<String>();
+		descriptionArray = new ArrayList<String>();
+		imageUrlArray = new ArrayList<String>();
+		
+		for(int i = 0; i <= walkingTourItems.size() - 1; i++){
+			buildingNameArray.add(walkingTourItems.get(i).getBuildingName());
+			buildingYearArray.add(String.valueOf(walkingTourItems.get(i).getYear()));
+			buildingTypeArray.add(walkingTourItems.get(i).getBuildingType());
+			addressArray.add(walkingTourItems.get(i).getAddress());
+			latitudeArray.add(String.valueOf(walkingTourItems.get(i).getLatitude()));
+			longitudeArray.add(String.valueOf(walkingTourItems.get(i).getLongitude()));
+			descriptionArray.add(walkingTourItems.get(i).getDescription());
+			imageUrlArray.add(walkingTourItems.get(i).getImageUrl());
+		}
 	}
 }

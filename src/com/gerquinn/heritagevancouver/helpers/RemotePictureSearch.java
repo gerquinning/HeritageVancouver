@@ -8,24 +8,6 @@ public class RemotePictureSearch {
 	
 	private String picNameToSearch;
 	private static String picsUrl = "http://quinntechssential.com/heritage_vancouver/user_img_upload";
-	private List<String> result = new ArrayList<String>();
-	
-	public String getPicNameToSearch(){
-		return picNameToSearch;
-	}
-	
-	public void setPicNameToSearch(String picNameToSearch){
-		this.picNameToSearch = picNameToSearch;
-	}
-	
-	public List<String> getResult(){
-		return result;
-	}
-	
-	public RemotePictureSearch() {
-		
-	}
-	
 	public static void main(String[] args){
 		
 		RemotePictureSearch picSearch = new RemotePictureSearch();
@@ -43,15 +25,18 @@ public class RemotePictureSearch {
 		}
 	}
 	
-	public void searchDirectory(File directory, String picNameToSearch){
+	private List<String> result = new ArrayList<String>();
+	
+	public RemotePictureSearch() {
 		
-		setPicNameToSearch(picNameToSearch);
-		
-		if(directory.isDirectory()){
-			search(directory);
-		}else{
-			System.out.println(directory.getAbsoluteFile() + " is not a directory");
-		}
+	}
+	
+	public String getPicNameToSearch(){
+		return picNameToSearch;
+	}
+	
+	public List<String> getResult(){
+		return result;
 	}
 	
 	private void search(File file){
@@ -69,6 +54,21 @@ public class RemotePictureSearch {
 				}
 			}
 		}
+	}
+	
+	public void searchDirectory(File directory, String picNameToSearch){
+		
+		setPicNameToSearch(picNameToSearch);
+		
+		if(directory.isDirectory()){
+			search(directory);
+		}else{
+			System.out.println(directory.getAbsoluteFile() + " is not a directory");
+		}
+	}
+	
+	public void setPicNameToSearch(String picNameToSearch){
+		this.picNameToSearch = picNameToSearch;
 	}
 
 }

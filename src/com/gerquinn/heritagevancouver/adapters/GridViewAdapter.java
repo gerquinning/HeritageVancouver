@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import com.gerquinn.heritagevancouver.FullScreenViewActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,10 +16,55 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.gerquinn.heritagevancouver.FullScreenViewActivity;
+
 public class GridViewAdapter extends BaseAdapter {
 	
+	class OnImageClickListener implements OnClickListener{
+		int position;
+		
+		//Constructor
+		public OnImageClickListener(int position){
+			this.position = position;
+		}
+		
+		@Override
+		public void onClick(View v){
+			//On Selecting GridView Image Upload Image
+			Intent i = new Intent(activity, FullScreenViewActivity.class);
+			i.putExtra("position", position);
+			activity.startActivity(i);
+		}
+	}
+	//Resizing image size
+	public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT){
+		
+		try{
+			File f = new File (filePath);
+			
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+			
+			final int REQUIRED_WIDTH = WIDTH;
+			final int REQUIRED_HEIGHT = HEIGHT;
+			
+			int scale = 1;
+			while(o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
+				scale *= 2;
+			
+			BitmapFactory.Options o2 = new BitmapFactory.Options();
+			o2.inSampleSize = scale;
+			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
 	private Activity activity;
+	
 	private ArrayList<String> filePaths = new ArrayList<String>();
+	
 	private int imageWidth;
 	
 	public GridViewAdapter(Activity activity, ArrayList<String> filePaths, int imageWidth){
@@ -64,48 +108,5 @@ public class GridViewAdapter extends BaseAdapter {
 		imageView.setOnClickListener(new OnImageClickListener(position));
 		
 		return imageView;
-	}
-	
-	class OnImageClickListener implements OnClickListener{
-		int position;
-		
-		//Constructor
-		public OnImageClickListener(int position){
-			this.position = position;
-		}
-		
-		@Override
-		public void onClick(View v){
-			//On Selecting GridView Image Upload Image
-			Intent i = new Intent(activity, FullScreenViewActivity.class);
-			i.putExtra("position", position);
-			activity.startActivity(i);
-		}
-	}
-	
-	//Resizing image size
-	public static Bitmap decodeFile(String filePath, int WIDTH, int HEIGHT){
-		
-		try{
-			File f = new File (filePath);
-			
-			BitmapFactory.Options o = new BitmapFactory.Options();
-			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-			
-			final int REQUIRED_WIDTH = WIDTH;
-			final int REQUIRED_HEIGHT = HEIGHT;
-			
-			int scale = 1;
-			while(o.outWidth / scale / 2 >= REQUIRED_WIDTH && o.outHeight / scale / 2 >= REQUIRED_HEIGHT)
-				scale *= 2;
-			
-			BitmapFactory.Options o2 = new BitmapFactory.Options();
-			o2.inSampleSize = scale;
-			return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-		}catch(FileNotFoundException e){
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

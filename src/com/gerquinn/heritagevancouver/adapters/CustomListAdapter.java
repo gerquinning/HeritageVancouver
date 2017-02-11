@@ -2,12 +2,6 @@ package com.gerquinn.heritagevancouver.adapters;
 
 import java.util.List;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.gerquinn.heritagevancouver.database.WalkingTourItems;
-import com.gerquinn.heritagevancouver.helpers.AppController;
-import com.gerquinn.heritagevancouver.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,6 +10,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.gerquinn.heritagevancouver.R;
+import com.gerquinn.heritagevancouver.database.WalkingTourItems;
+import com.gerquinn.heritagevancouver.helpers.AppController;
 
 public class CustomListAdapter extends BaseAdapter{
 	
@@ -32,6 +32,21 @@ public class CustomListAdapter extends BaseAdapter{
 	
 	public CustomListAdapter(String[] values) {
 		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public int getCount() {
+		return walkingTourItems.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return walkingTourItems.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
 	}
 
 	@Override
@@ -60,21 +75,6 @@ public class CustomListAdapter extends BaseAdapter{
 		thumbnail.setImageUrl(wti.getThumbUrl(), imageLoader);
 		
 		return convertView;
-	}
-
-	@Override
-	public int getCount() {
-		return walkingTourItems.size();
-	}
-
-	@Override
-	public Object getItem(int position) {
-		return walkingTourItems.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
 	}
 
 }

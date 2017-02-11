@@ -14,6 +14,20 @@ public class WalkingTourActivity extends Activity {
 	TextView titleText;
 	ImageView westHastingsImage, japantownImage, chinatownImage, carrallStreetImage, strathconaImage, molehillImage;
 	
+	private void CarrallStreetLoad(){
+		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
+		i.putExtra("databaseName","heritage_14");
+		i.putExtra("tableName","carrall_street_tour");
+		startActivity(i);
+	}
+	
+	private void ChinatownLoad(){
+		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
+		i.putExtra("databaseName","heritage_14");
+		i.putExtra("tableName","chinatown_tour");
+		startActivity(i);
+	}
+	
 	public void ImageViewSetup(){
 		
 		//Text setup
@@ -78,6 +92,13 @@ public class WalkingTourActivity extends Activity {
 		
 	}
 	
+	private void JapantownLoad(){
+		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
+		i.putExtra("databaseName","heritage_14");
+		i.putExtra("tableName","japantown");
+		startActivity(i);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		
@@ -104,27 +125,6 @@ public class WalkingTourActivity extends Activity {
 		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
 		i.putExtra("databaseName","heritage_14");
 		i.putExtra("tableName","west_hastings_tour");
-		startActivity(i);
-	}
-	
-	private void JapantownLoad(){
-		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
-		i.putExtra("databaseName","heritage_14");
-		i.putExtra("tableName","japantown");
-		startActivity(i);
-	}
-	
-	private void ChinatownLoad(){
-		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
-		i.putExtra("databaseName","heritage_14");
-		i.putExtra("tableName","chinatown_tour");
-		startActivity(i);
-	}
-	
-	private void CarrallStreetLoad(){
-		Intent i = new Intent(WalkingTourActivity.this, BuildingListActivity.class);
-		i.putExtra("databaseName","heritage_14");
-		i.putExtra("tableName","carrall_street_tour");
 		startActivity(i);
 	}
 }

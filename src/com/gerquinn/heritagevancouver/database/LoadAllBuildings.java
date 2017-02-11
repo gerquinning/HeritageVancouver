@@ -8,13 +8,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.gerquinn.heritagevancouver.MainActivity;
-import com.gerquinn.heritagevancouver.helpers.JSONParser;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+
+import com.gerquinn.heritagevancouver.MainActivity;
+import com.gerquinn.heritagevancouver.helpers.JSONParser;
 
 /**
  * Background Async Task to Load all buildings by making HTTP Request

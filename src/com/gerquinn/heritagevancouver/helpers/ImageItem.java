@@ -17,12 +17,12 @@ public class ImageItem {
 		return image;
 	}
 	
-	public void setImage(Bitmap image){
-		this.image = image;
-	}
-	
 	public String getTitle(){
 		return title;
+	}
+	
+	public void setImage(Bitmap image){
+		this.image = image;
 	}
 	
 	public void setTitle(String title){

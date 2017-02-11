@@ -1,6 +1,7 @@
 package com.gerquinn.heritagevancouver;
 
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,26 @@ public class WalkingTourMapActivity extends Activity {
 		latitude = Double.valueOf(latitudeArray.get(position));
 		longitude = Double.valueOf(longitudeArray.get(position));
 
+	}
+
+	public void getValues(){
+		buildingNameArray = new ArrayList<String>();
+		buildingYearArray = new ArrayList<String>();
+		buildingTypeArray = new ArrayList<String>();
+		addressArray = new ArrayList<String>();
+		latitudeArray = new ArrayList<String>();
+		longitudeArray = new ArrayList<String>();
+		descriptionArray = new ArrayList<String>();
+		imageUrlArray = new ArrayList<String>();
+		
+		buildingNameArray = getIntent().getExtras().getStringArrayList("buildingNameArray");
+		buildingYearArray = getIntent().getExtras().getStringArrayList("buildingYearArray");
+		buildingTypeArray = getIntent().getExtras().getStringArrayList("buildingTypeArray");
+		addressArray = getIntent().getExtras().getStringArrayList("addressArray");
+		latitudeArray = getIntent().getExtras().getStringArrayList("latitudeArray");
+		longitudeArray = getIntent().getExtras().getStringArrayList("longitudeArray");
+		descriptionArray = getIntent().getExtras().getStringArrayList("descriptionArray");
+		imageUrlArray = getIntent().getExtras().getStringArrayList("imageUrlArray");
 	}
 
 	// Function to load map. If map is not created it will create it for you
@@ -152,26 +173,6 @@ public class WalkingTourMapActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		initilizeMap();
-	}
-
-	public void getValues(){
-		buildingNameArray = new ArrayList<String>();
-		buildingYearArray = new ArrayList<String>();
-		buildingTypeArray = new ArrayList<String>();
-		addressArray = new ArrayList<String>();
-		latitudeArray = new ArrayList<String>();
-		longitudeArray = new ArrayList<String>();
-		descriptionArray = new ArrayList<String>();
-		imageUrlArray = new ArrayList<String>();
-		
-		buildingNameArray = getIntent().getExtras().getStringArrayList("buildingNameArray");
-		buildingYearArray = getIntent().getExtras().getStringArrayList("buildingYearArray");
-		buildingTypeArray = getIntent().getExtras().getStringArrayList("buildingTypeArray");
-		addressArray = getIntent().getExtras().getStringArrayList("addressArray");
-		latitudeArray = getIntent().getExtras().getStringArrayList("latitudeArray");
-		longitudeArray = getIntent().getExtras().getStringArrayList("longitudeArray");
-		descriptionArray = getIntent().getExtras().getStringArrayList("descriptionArray");
-		imageUrlArray = getIntent().getExtras().getStringArrayList("imageUrlArray");
 	}
 	
 	public void setValues(String buildingName, String buildingYear, String buildingType, String address, String latitude, String longitude, String description, String imageUrl){

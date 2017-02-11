@@ -1,13 +1,13 @@
 package com.gerquinn.heritagevancouver;
 
-import com.gerquinn.heritagevancouver.adapters.FullScreenImageAdapter;
-import com.gerquinn.heritagevancouver.helpers.Utils;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+
+import com.gerquinn.heritagevancouver.adapters.FullScreenImageAdapter;
+import com.gerquinn.heritagevancouver.helpers.Utils;
 
 public class FullScreenViewActivity extends Activity{
 	private Utils utils;
@@ -32,6 +32,14 @@ public class FullScreenViewActivity extends Activity{
 		viewPager.setCurrentItem(position);
 	}
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState){
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		//Get the file uri
+		bitmap = savedInstanceState.getParcelable("bitmap");
+	}
+	
 	/**
      * Here we store the file url as it will be null after returning from camera
      * app
@@ -43,14 +51,6 @@ public class FullScreenViewActivity extends Activity{
 		bitmap = adapter.getBitmap();
 		//Save file url in bundle as it will be null on screen orientation changes
 		outState.putParcelable("bitmap", bitmap);
-	}
-	
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState){
-		super.onRestoreInstanceState(savedInstanceState);
-		
-		//Get the file uri
-		bitmap = savedInstanceState.getParcelable("bitmap");
 	}
 
 }

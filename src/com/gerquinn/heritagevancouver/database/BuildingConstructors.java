@@ -46,12 +46,12 @@ public class BuildingConstructors {
 		return this._buildingName;
 	}
 	
-	public int getBuildingYear(){
-		return this._buildingYear;
-	}
-	
 	public String getBuildingType(){
 		return this._buildingType;
+	}
+	
+	public int getBuildingYear(){
+		return this._buildingYear;
 	}
 	
 	public String getDescription(){
@@ -87,12 +87,12 @@ public class BuildingConstructors {
 		
 	}
 	
-	public void setBuildingYear(int buildingYear) {
-		this._buildingYear = buildingYear;
-		
-	}
 	public void setBuildingType(String buildingType) {
 		this._buildingType = buildingType;
+		
+	}
+	public void setBuildingYear(int buildingYear) {
+		this._buildingYear = buildingYear;
 		
 	}
 	

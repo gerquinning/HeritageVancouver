@@ -16,10 +16,10 @@
 
 package com.gerquinn.heritagevancouver.location;
 
-import com.gerquinn.heritagevancouver.R;
-
 import android.content.Context;
 import android.location.Location;
+
+import com.gerquinn.heritagevancouver.R;
 
 /**
  * Defines app-wide constants and utilities

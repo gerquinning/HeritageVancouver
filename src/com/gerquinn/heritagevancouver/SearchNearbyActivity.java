@@ -2,6 +2,24 @@ package com.gerquinn.heritagevancouver;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.gerquinn.heritagevancouver.adapters.NothingSelectedSpinnerAdapter;
 import com.gerquinn.heritagevancouver.database.DatabaseFunctions;
 import com.gerquinn.heritagevancouver.location.GPSTracker;
@@ -17,24 +35,6 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.location.Location;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Toast;
 
 public class SearchNearbyActivity extends Activity implements LocationListener,
 		GooglePlayServicesClient.ConnectionCallbacks,
@@ -94,170 +94,6 @@ public class SearchNearbyActivity extends Activity implements LocationListener,
 
 	// public final String[] neighbourhoodArray = [""]
 	// public final ArrayList<String> categoryArray = new ArrayList<String>();
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_search_nearby);
-
-		distanceLabel = (TextView) findViewById(R.id.distanceAwayText);
-		buildingsFoundLabel = (TextView) findViewById(R.id.resultsText);
-		listButton = (Button) findViewById(R.id.listButton);
-		mapButton = (Button) findViewById(R.id.mapButton);
-		distanceBar = (SeekBar) findViewById(R.id.distanceBar);
-
-		distanceLabel.setText("Distance Away: " + progressChanged);
-
-		// listButton.setVisibility(View.GONE);
-		// mapButton.setVisibility(View.GONE);
-
-		SpinnerSetup();
-
-		distanceBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				if (progress > 0) {
-					progressChanged = progress;
-					distanceLabel.setText("Distance Away: " + progressChanged);
-				}
-			}
-
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
-				// TODO
-			}
-
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-				Toast.makeText(SearchNearbyActivity.this,
-						"Distance Away: " + progressChanged + "KM",
-						Toast.LENGTH_SHORT).show();
-				getCoordinates();
-				buildingListSetup();
-			}
-		});
-
-		listButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				/*
-				 * Intent i = new Intent(SearchNearbyActivity.this,
-				 * NearbyListActivity.class); i.putExtra("Building Name Array",
-				 * buildingNearNameArray); i.putExtra("Building Address Array",
-				 * addressNearArray); i.putExtra("Latitude Array",
-				 * latitudeNearArray); i.putExtra("Longitude Array",
-				 * longitudeNearArray); startActivity(i);
-				 * 
-				 */
-			}
-		});
-
-		mapButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(SearchNearbyActivity.this,
-						MapActivity.class);
-				i.putExtra("Array Boolean", true);
-				i.putExtra("Building Name Array", buildingNearNameArray);
-				i.putExtra("Building Address Array", addressNearArray);
-				i.putExtra("Latitude Array", latitudeNearStringArray);
-				i.putExtra("Longitude Array", longitudeNearStringArray);
-				i.putExtra("Area Array", areaNearArray);
-				i.putExtra("Building Type Array", buildingNearTypeArray);
-				startActivity(i);
-			}
-		});
-
-		MapsInitializer.initialize(getApplicationContext());
-		setArrayLists();
-	}
-
-	public void setArrayLists() {
-		addressArray = databaseFunctions.getAddressArray();
-		buildingNameArray = databaseFunctions.getBuildingNameArray();
-		latitudeArray = databaseFunctions.getLatitudeArray();
-		longitudeArray = databaseFunctions.getLongitudeArray();
-		buildingTypeArray = databaseFunctions.getBuildingTypeArray();
-		areaArray = databaseFunctions.getArea();
-		
-		if(addressArray.size() > 0){
-			getCoordinates();
-			buildingListSetup();
-			initilizeMap();
-		}
-	}
-
-	private void SpinnerSetup() {
-
-		Spinner areaSpinner = (Spinner) findViewById(R.id.areaSpinner);
-		Spinner categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
-
-		ArrayAdapter<CharSequence> adapterArea = ArrayAdapter
-				.createFromResource(this, R.array.area_array,
-						android.R.layout.simple_spinner_item);
-		adapterArea
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-		ArrayAdapter<CharSequence> adapterCategory = ArrayAdapter
-				.createFromResource(this, R.array.category_array,
-						android.R.layout.simple_spinner_item);
-		adapterCategory
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-		areaSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapterArea,
-				R.layout.area_spinner_row_nothing_selected,
-				// R.layout.contact_spinner_nothing_selected_dropdown, //
-				// Optional
-				this));
-		// createSpinner.setPrompt("Select a Neighbourhood");
-
-		categorySpinner.setAdapter(new NothingSelectedSpinnerAdapter(
-				adapterCategory,
-				R.layout.category_spinner_row_nothing_selected,
-				// R.layout.contact_spinner_nothing_selected_dropdown, //
-				// Optional
-				this));
-
-		areaSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				Object item = arg0.getItemAtPosition(arg2);
-				if (item != null) {
-					areaString = item.toString();
-					buildingListSetup();
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		categorySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				Object item = arg0.getItemAtPosition(arg2);
-				if (item != null) {
-					categoryString = item.toString();
-					buildingListSetup();
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-	}
 
 	public void buildingListSetup() {
 		
@@ -358,6 +194,37 @@ public class SearchNearbyActivity extends Activity implements LocationListener,
 		// int meterConversion = 1000;
 
 		return dist;
+	}
+
+	public void getCoordinates() {
+		/*
+		 * buildingName = getIntent().getExtras().getString("Building Name");
+		 * address = getIntent().getExtras().getString("Building Address");
+		 * latitude = getIntent().getExtras().getDouble("Latitude"); longitude =
+		 * getIntent().getExtras().getDouble("Longitude");
+		 */
+
+		// check if GPS enabled
+		GPSTracker gpsTracker = new GPSTracker(this);
+
+		if (gpsTracker.canGetLocation()) {
+			latitude = gpsTracker.latitude;
+
+			longitude = gpsTracker.longitude;
+
+			// String country = gpsTracker.getCountryName(this);
+
+			// String city = gpsTracker.getLocality(this);
+
+			// String postalCode = gpsTracker.getPostalCode(this);
+
+			// String addressLine = gpsTracker.getAddressLine(this);
+		} else {
+			// can't get location
+			// GPS or Network is not enabled
+			// Ask user to enable GPS/network in settings
+			gpsTracker.showSettingsAlert();
+		}
 	}
 
 	// Function to load map. If map is not created it will create it for you
@@ -538,37 +405,6 @@ public class SearchNearbyActivity extends Activity implements LocationListener,
 		googleMap.getUiSettings().setRotateGesturesEnabled(true);
 	}
 
-	public void getCoordinates() {
-		/*
-		 * buildingName = getIntent().getExtras().getString("Building Name");
-		 * address = getIntent().getExtras().getString("Building Address");
-		 * latitude = getIntent().getExtras().getDouble("Latitude"); longitude =
-		 * getIntent().getExtras().getDouble("Longitude");
-		 */
-
-		// check if GPS enabled
-		GPSTracker gpsTracker = new GPSTracker(this);
-
-		if (gpsTracker.canGetLocation()) {
-			latitude = gpsTracker.latitude;
-
-			longitude = gpsTracker.longitude;
-
-			// String country = gpsTracker.getCountryName(this);
-
-			// String city = gpsTracker.getLocality(this);
-
-			// String postalCode = gpsTracker.getPostalCode(this);
-
-			// String addressLine = gpsTracker.getAddressLine(this);
-		} else {
-			// can't get location
-			// GPS or Network is not enabled
-			// Ask user to enable GPS/network in settings
-			gpsTracker.showSettingsAlert();
-		}
-	}
-
 	@Override
 	public void onConnected(Bundle arg0) {
 		// Display the connection status
@@ -603,6 +439,85 @@ public class SearchNearbyActivity extends Activity implements LocationListener,
 			 */
 			// showErrorDialog(connectionResult.getErrorCode());
 		}
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_search_nearby);
+
+		distanceLabel = (TextView) findViewById(R.id.distanceAwayText);
+		buildingsFoundLabel = (TextView) findViewById(R.id.resultsText);
+		listButton = (Button) findViewById(R.id.listButton);
+		mapButton = (Button) findViewById(R.id.mapButton);
+		distanceBar = (SeekBar) findViewById(R.id.distanceBar);
+
+		distanceLabel.setText("Distance Away: " + progressChanged);
+
+		// listButton.setVisibility(View.GONE);
+		// mapButton.setVisibility(View.GONE);
+
+		SpinnerSetup();
+
+		distanceBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if (progress > 0) {
+					progressChanged = progress;
+					distanceLabel.setText("Distance Away: " + progressChanged);
+				}
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				Toast.makeText(SearchNearbyActivity.this,
+						"Distance Away: " + progressChanged + "KM",
+						Toast.LENGTH_SHORT).show();
+				getCoordinates();
+				buildingListSetup();
+			}
+		});
+
+		listButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				/*
+				 * Intent i = new Intent(SearchNearbyActivity.this,
+				 * NearbyListActivity.class); i.putExtra("Building Name Array",
+				 * buildingNearNameArray); i.putExtra("Building Address Array",
+				 * addressNearArray); i.putExtra("Latitude Array",
+				 * latitudeNearArray); i.putExtra("Longitude Array",
+				 * longitudeNearArray); startActivity(i);
+				 * 
+				 */
+			}
+		});
+
+		mapButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(SearchNearbyActivity.this,
+						MapActivity.class);
+				i.putExtra("Array Boolean", true);
+				i.putExtra("Building Name Array", buildingNearNameArray);
+				i.putExtra("Building Address Array", addressNearArray);
+				i.putExtra("Latitude Array", latitudeNearStringArray);
+				i.putExtra("Longitude Array", longitudeNearStringArray);
+				i.putExtra("Area Array", areaNearArray);
+				i.putExtra("Building Type Array", buildingNearTypeArray);
+				startActivity(i);
+			}
+		});
+
+		MapsInitializer.initialize(getApplicationContext());
+		setArrayLists();
 	}
 
 	@Override
@@ -644,6 +559,91 @@ public class SearchNearbyActivity extends Activity implements LocationListener,
 		// mLocationClient.disconnect();
 		super.onStop();
 
+	}
+
+	public void setArrayLists() {
+		addressArray = databaseFunctions.getAddressArray();
+		buildingNameArray = databaseFunctions.getBuildingNameArray();
+		latitudeArray = databaseFunctions.getLatitudeArray();
+		longitudeArray = databaseFunctions.getLongitudeArray();
+		buildingTypeArray = databaseFunctions.getBuildingTypeArray();
+		areaArray = databaseFunctions.getArea();
+		
+		if(addressArray.size() > 0){
+			getCoordinates();
+			buildingListSetup();
+			initilizeMap();
+		}
+	}
+
+	private void SpinnerSetup() {
+
+		Spinner areaSpinner = (Spinner) findViewById(R.id.areaSpinner);
+		Spinner categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
+
+		ArrayAdapter<CharSequence> adapterArea = ArrayAdapter
+				.createFromResource(this, R.array.area_array,
+						android.R.layout.simple_spinner_item);
+		adapterArea
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		ArrayAdapter<CharSequence> adapterCategory = ArrayAdapter
+				.createFromResource(this, R.array.category_array,
+						android.R.layout.simple_spinner_item);
+		adapterCategory
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		areaSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapterArea,
+				R.layout.area_spinner_row_nothing_selected,
+				// R.layout.contact_spinner_nothing_selected_dropdown, //
+				// Optional
+				this));
+		// createSpinner.setPrompt("Select a Neighbourhood");
+
+		categorySpinner.setAdapter(new NothingSelectedSpinnerAdapter(
+				adapterCategory,
+				R.layout.category_spinner_row_nothing_selected,
+				// R.layout.contact_spinner_nothing_selected_dropdown, //
+				// Optional
+				this));
+
+		areaSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				Object item = arg0.getItemAtPosition(arg2);
+				if (item != null) {
+					areaString = item.toString();
+					buildingListSetup();
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		categorySpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				Object item = arg0.getItemAtPosition(arg2);
+				if (item != null) {
+					categoryString = item.toString();
+					buildingListSetup();
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 }

@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.gerquinn.heritagevancouver.MakePhotoActivity;
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -14,12 +12,19 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.gerquinn.heritagevancouver.MakePhotoActivity;
+
 public class PhotoHandler implements PictureCallback{
 	
 	private final Context context;
 	
 	public PhotoHandler(Context context){
 		this.context = context;
+	}
+	
+	private File getDir(){
+		File sdDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		return new File(sdDir, "CameraAPIDemo");
 	}
 	
 	@Override
@@ -51,11 +56,6 @@ public class PhotoHandler implements PictureCallback{
 			Log.d(MakePhotoActivity.DEBUG_TAG, "File" + filename + "not saved: " + e.getMessage());
 			Toast.makeText(context, "Image could not be saved.", Toast.LENGTH_SHORT).show();
 		}
-	}
-	
-	private File getDir(){
-		File sdDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		return new File(sdDir, "CameraAPIDemo");
 	}
 
 }

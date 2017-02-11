@@ -1,8 +1,8 @@
 package com.gerquinn.heritagevancouver.helpers;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,60 +19,22 @@ import com.google.gson.GsonBuilder;
 
 public class JSONWriter{
 	
+	class DataObject{
+		public String filename;
+		public String lat;
+		public String lon;
+	}
 	private String jsonUrl = "http://quinntechssential.com/heritage_vancouver/user_img_upload/fileinfo.json";
 	private String jsonResponse;
-	private static String TAG = JSONWriter.class.getSimpleName();
 	
+	private static String TAG = JSONWriter.class.getSimpleName();
 	private Activity activity;
-	private Context context;
 	 
-	 public JSONWriter(Activity activity, Context context){
+	 private Context context;
+	
+	public JSONWriter(Activity activity, Context context){
 	    this.activity = activity;
 		this.context = context;
-	}
-	
-	/**
-     * Method to make json object request where json response starts wtih {
-     * */
-	public void makeJsonObjectRequest(){
-		System.out.println("JSON Object Method");
-		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
-				jsonUrl,null, new Response.Listener<JSONObject>() {
-			
-			@Override
-			public void onResponse(JSONObject response){
-				Log.d(TAG, response.toString());
-				System.out.println("Response 1: " + response.toString());
-				try{
-					//Parsing JSON Object Response
-					//Response will be a JSON Object
-					String name = response.getString("name");
-					String lat = response.getString("lat");
-					String lon = response.getString("long");
-					
-					jsonResponse = "";
-					jsonResponse += "Name: " + name + "\n\n";
-					jsonResponse += "Lat: " + lat + "\n\n";
-					jsonResponse += "Long: " + lon + "\n\n";
-					
-					System.out.println("Response end: " + response.toString());
-					Log.d(TAG, jsonResponse);
-					
-				}catch(JSONException e){
-					e.printStackTrace();
-				}
-			} 
-				}, new Response.ErrorListener() {
-					
-					@Override
-					public void onErrorResponse(VolleyError error){
-						VolleyLog.d(TAG, "Error: " + error.getMessage());
-						
-					}
-				});
-		
-		//Adding Request to Request queue
-		AppController.getInstance().addToRequestQueue(jsonObjReq);
 	}
 	
 	/**
@@ -120,6 +82,50 @@ public class JSONWriter{
 		AppController.getInstance().addToRequestQueue(req);
 	}
 	
+	/**
+     * Method to make json object request where json response starts wtih {
+     * */
+	public void makeJsonObjectRequest(){
+		System.out.println("JSON Object Method");
+		JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
+				jsonUrl,null, new Response.Listener<JSONObject>() {
+			
+			@Override
+			public void onResponse(JSONObject response){
+				Log.d(TAG, response.toString());
+				System.out.println("Response 1: " + response.toString());
+				try{
+					//Parsing JSON Object Response
+					//Response will be a JSON Object
+					String name = response.getString("name");
+					String lat = response.getString("lat");
+					String lon = response.getString("long");
+					
+					jsonResponse = "";
+					jsonResponse += "Name: " + name + "\n\n";
+					jsonResponse += "Lat: " + lat + "\n\n";
+					jsonResponse += "Long: " + lon + "\n\n";
+					
+					System.out.println("Response end: " + response.toString());
+					Log.d(TAG, jsonResponse);
+					
+				}catch(JSONException e){
+					e.printStackTrace();
+				}
+			} 
+				}, new Response.ErrorListener() {
+					
+					@Override
+					public void onErrorResponse(VolleyError error){
+						VolleyLog.d(TAG, "Error: " + error.getMessage());
+						
+					}
+				});
+		
+		//Adding Request to Request queue
+		AppController.getInstance().addToRequestQueue(jsonObjReq);
+	}
+	
 	public void writeToJSON(String filename, String lat, String lon){
 		
 		DataObject dataObject = new DataObject();
@@ -135,12 +141,6 @@ public class JSONWriter{
 		
 		HttpRequestWithEntity request = new HttpRequestWithEntity(activity, context);
 		request.execute(json);
-	}
-	
-	class DataObject{
-		public String filename;
-		public String lat;
-		public String lon;
 	}
 
 	

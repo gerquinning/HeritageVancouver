@@ -2,15 +2,15 @@ package com.gerquinn.heritagevancouver;
 
 import java.util.ArrayList;
 
-import com.gerquinn.heritagevancouver.adapters.RemoteGridViewAdapter;
-import com.gerquinn.heritagevancouver.helpers.DirectoryReader;
-import com.gerquinn.heritagevancouver.helpers.Utils;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.GridView;
+
+import com.gerquinn.heritagevancouver.adapters.RemoteGridViewAdapter;
+import com.gerquinn.heritagevancouver.helpers.DirectoryReader;
+import com.gerquinn.heritagevancouver.helpers.Utils;
 
 public class RemoteImageGalleryActivity extends Activity{
 	
@@ -25,37 +25,12 @@ public class RemoteImageGalleryActivity extends Activity{
 	Activity activity;
 	
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_picture_gallery);
-		
-		gridView = (GridView)findViewById(R.id.gridView);
-		utils = new Utils(this);
-		activity = this;
-		
-		//Initializing GridView
-		InitializeGridLayout();
-		
-		dir = new DirectoryReader();
-		dir.execute();
-		
-		//Loading all Image Paths from SDCard
-		//imagePaths = utils.getFilePaths();
-		
-	}
-	
-	@Override
-	public void onResume(){
-
-	    gridView.setSelection(index);
-	    super.onResume();
-	}
-
-	@Override
-	public void onPause(){  
-	    index = gridView.getFirstVisiblePosition();
-	    super.onPause();
+	/**
+	 * Getter and Setter methods for the 
+	 * List of Images from the Server
+	 */
+	public ArrayList<String> getFilesArray() {
+		return imagePaths;
 	}
 	
 	/**
@@ -92,13 +67,38 @@ public class RemoteImageGalleryActivity extends Activity{
 		gridView.setHorizontalSpacing((int) padding);
 		gridView.setVerticalSpacing((int) padding);
 	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_picture_gallery);
+		
+		gridView = (GridView)findViewById(R.id.gridView);
+		utils = new Utils(this);
+		activity = this;
+		
+		//Initializing GridView
+		InitializeGridLayout();
+		
+		dir = new DirectoryReader();
+		dir.execute();
+		
+		//Loading all Image Paths from SDCard
+		//imagePaths = utils.getFilePaths();
+		
+	}
 	
-	/**
-	 * Getter and Setter methods for the 
-	 * List of Images from the Server
-	 */
-	public ArrayList<String> getFilesArray() {
-		return imagePaths;
+	@Override
+	public void onPause(){  
+	    index = gridView.getFirstVisiblePosition();
+	    super.onPause();
+	}
+	
+	@Override
+	public void onResume(){
+
+	    gridView.setSelection(index);
+	    super.onResume();
 	}
 
 	public void setFilesArray(ArrayList<String> imagePaths) {

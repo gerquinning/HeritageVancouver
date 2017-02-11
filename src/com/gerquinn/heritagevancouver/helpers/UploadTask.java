@@ -18,9 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.gerquinn.heritagevancouver.R;
-import com.gerquinn.heritagevancouver.UploadPictureActivity;
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -29,6 +26,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.gerquinn.heritagevancouver.R;
+import com.gerquinn.heritagevancouver.UploadPictureActivity;
 
 public class UploadTask extends AsyncTask<String, Void, Void>{
 	
@@ -65,17 +65,17 @@ public class UploadTask extends AsyncTask<String, Void, Void>{
 		return null;
 	}
 	
+	@Override
+	protected void onPostExecute(Void result){
+		super.onPostExecute(result);
+	}
+	
 	/**
 	 * Before starting background thread Show Progress Dialog
 	 * */
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-	}
-	
-	@Override
-	protected void onPostExecute(Void result){
-		super.onPostExecute(result);
 	}
 	
 	public int uploadFile(String sourceFileUri){

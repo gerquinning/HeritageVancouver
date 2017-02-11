@@ -25,27 +25,12 @@ public class MulitpartEntity implements HttpEntity{
 		this.boundary = System.currentTimeMillis() + "";
 	}
 	
-	public void writeFirstBoundaryIfNeeds(){
-		if(!isSetFirst){
-			try{
-				out.write(("--" + boundary + "\r\n").getBytes());
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-		}
-		isSetFirst = true;
-	}
-	
-	public void writeLastBoundaryIfNeeds(){
-		if(isSetLast){
-			return;
-		}
+	public void addPart(final String key, final File value){
 		try{
-			out.write(("\r\n--" + boundary + "--\r\n").getBytes());
-		}catch(IOException e){
+			addPart(key, value.getName(), new FileInputStream(value));
+		}catch(FileNotFoundException e){
 			e.printStackTrace();
 		}
-		isSetLast = true;
 	}
 	
 	public void addPart(final String key, final String value){
@@ -90,12 +75,21 @@ public class MulitpartEntity implements HttpEntity{
 		}
 	}
 	
-	public void addPart(final String key, final File value){
-		try{
-			addPart(key, value.getName(), new FileInputStream(value));
-		}catch(FileNotFoundException e){
-			e.printStackTrace();
+	@Override
+	public void consumeContent() throws IOException, UnsupportedOperationException{
+		if(isStreaming()){
+			throw new UnsupportedOperationException("Streaming entity does not implement #consumeContent()");
 		}
+	}
+	
+	@Override
+	public InputStream getContent() throws IOException, UnsupportedOperationException{
+		return new ByteArrayInputStream(out.toByteArray());
+	}
+	
+	@Override
+	public Header getContentEncoding(){
+		return null;
 	}
 	
 	@Override
@@ -124,25 +118,31 @@ public class MulitpartEntity implements HttpEntity{
 		return false;
 	}
 	
+	public void writeFirstBoundaryIfNeeds(){
+		if(!isSetFirst){
+			try{
+				out.write(("--" + boundary + "\r\n").getBytes());
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+		isSetFirst = true;
+	}
+	
+	public void writeLastBoundaryIfNeeds(){
+		if(isSetLast){
+			return;
+		}
+		try{
+			out.write(("\r\n--" + boundary + "--\r\n").getBytes());
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		isSetLast = true;
+	}
+	
 	@Override
 	public void writeTo(final OutputStream outstream) throws IOException{
 		outstream.write(out.toByteArray());
-	}
-	
-	@Override
-	public Header getContentEncoding(){
-		return null;
-	}
-	
-	@Override
-	public void consumeContent() throws IOException, UnsupportedOperationException{
-		if(isStreaming()){
-			throw new UnsupportedOperationException("Streaming entity does not implement #consumeContent()");
-		}
-	}
-	
-	@Override
-	public InputStream getContent() throws IOException, UnsupportedOperationException{
-		return new ByteArrayInputStream(out.toByteArray());
 	}
 }

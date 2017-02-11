@@ -2,14 +2,14 @@ package com.gerquinn.heritagevancouver;
 
 import java.util.ArrayList;
 
-import com.gerquinn.heritagevancouver.adapters.GridViewAdapter;
-import com.gerquinn.heritagevancouver.helpers.Utils;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.GridView;
+
+import com.gerquinn.heritagevancouver.adapters.GridViewAdapter;
+import com.gerquinn.heritagevancouver.helpers.Utils;
 
 public class ImageGalleryActivity extends Activity{
 	
@@ -20,38 +20,6 @@ public class ImageGalleryActivity extends Activity{
 	private int columnWidth;
 	private static int index;
 	//private int position;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_picture_gallery);
-		
-		gridView = (GridView)findViewById(R.id.gridView);
-		utils = new Utils(this);
-		
-		//Initializing GridView
-		InitializeGridLayout();
-		
-		//Loading all Image Paths from SDCard
-		imagePaths = utils.getFilePaths();
-		
-		customGridAdapter = new GridViewAdapter(this, imagePaths, columnWidth);
-		gridView.setAdapter(customGridAdapter);
-		
-	}
-	
-	@Override
-	public void onResume(){
-
-	    gridView.setSelection(index);
-	    super.onResume();
-	}
-
-	@Override
-	public void onPause(){  
-	    index = gridView.getFirstVisiblePosition();
-	    super.onPause();
-	}
 	
 	/**
      * Here we store the file url as it will be null after returning from camera
@@ -85,6 +53,38 @@ public class ImageGalleryActivity extends Activity{
 		gridView.setPadding((int) padding, (int) padding, (int) padding, (int) padding);
 		gridView.setHorizontalSpacing((int) padding);
 		gridView.setVerticalSpacing((int) padding);
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_picture_gallery);
+		
+		gridView = (GridView)findViewById(R.id.gridView);
+		utils = new Utils(this);
+		
+		//Initializing GridView
+		InitializeGridLayout();
+		
+		//Loading all Image Paths from SDCard
+		imagePaths = utils.getFilePaths();
+		
+		customGridAdapter = new GridViewAdapter(this, imagePaths, columnWidth);
+		gridView.setAdapter(customGridAdapter);
+		
+	}
+
+	@Override
+	public void onPause(){  
+	    index = gridView.getFirstVisiblePosition();
+	    super.onPause();
+	}
+	
+	@Override
+	public void onResume(){
+
+	    gridView.setSelection(index);
+	    super.onResume();
 	}
 	
 }

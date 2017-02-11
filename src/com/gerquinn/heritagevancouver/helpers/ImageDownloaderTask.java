@@ -17,38 +17,6 @@ import android.widget.ImageView;
 
 public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 	
-	private final WeakReference<ImageView> imageViewReference;
-	
-	public ImageDownloaderTask(ImageView imageView){
-		imageViewReference = new WeakReference<ImageView>(imageView);
-	}
-	
-	//Actual Download method, run in the Task Thread
-	@Override
-	protected Bitmap doInBackground(String... params){
-		//params comes from the execute() call: params[0] is the url.
-		return downloadBitmap(params[0]);
-	}
-	
-	//Once the Image is downloaded, associates it to the ImageView
-	@Override
-	protected void onPostExecute(Bitmap bitmap){
-		if(isCancelled()){
-			bitmap = null;
-		}
-		
-		if(imageViewReference != null){
-			ImageView imageView = imageViewReference.get();
-			if(imageView != null){
-				if(bitmap != null){
-					imageView.setImageBitmap(bitmap);
-				}else{
-					//imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(R.drawable.list_placeholder));
-				}
-			}
-		}
-	}
-	
 	static Bitmap downloadBitmap(String url){
 		final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 		final HttpGet getRequest = new HttpGet(url);
@@ -83,6 +51,38 @@ public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 			}
 		}
 		return null;
+	}
+	
+	private final WeakReference<ImageView> imageViewReference;
+	
+	public ImageDownloaderTask(ImageView imageView){
+		imageViewReference = new WeakReference<ImageView>(imageView);
+	}
+	
+	//Actual Download method, run in the Task Thread
+	@Override
+	protected Bitmap doInBackground(String... params){
+		//params comes from the execute() call: params[0] is the url.
+		return downloadBitmap(params[0]);
+	}
+	
+	//Once the Image is downloaded, associates it to the ImageView
+	@Override
+	protected void onPostExecute(Bitmap bitmap){
+		if(isCancelled()){
+			bitmap = null;
+		}
+		
+		if(imageViewReference != null){
+			ImageView imageView = imageViewReference.get();
+			if(imageView != null){
+				if(bitmap != null){
+					imageView.setImageBitmap(bitmap);
+				}else{
+					//imageView.setImageDrawable(imageView.getContext().getResources().getDrawable(R.drawable.list_placeholder));
+				}
+			}
+		}
 	}
 
 }

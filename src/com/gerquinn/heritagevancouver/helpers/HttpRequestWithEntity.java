@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -15,7 +16,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
-import org.apache.commons.io.IOUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -49,6 +49,33 @@ public class HttpRequestWithEntity extends  AsyncTask<String, Void, Void> {
 	 public HttpRequestWithEntity(Activity activity, Context context){
 	    this.activity = activity;
 		this.context = context;
+	}
+	
+	@Override
+	protected Void doInBackground(String... params) {
+		if(params == null)
+			return null;
+		
+		System.out.println("Sending... " + params[0]);
+		String json = params[0]; 
+		
+		response = sendJSONObject(jsonUrl, json);
+		System.out.println("Response: " + response.getStatusLine());
+		
+		return null;
+	}
+	
+	@Override
+	protected void onPostExecute(Void result){
+		super.onPostExecute(result);
+	}
+	
+	/**
+	 * Before starting background thread Show Progress Dialog
+	 * */
+	@Override
+	protected void onPreExecute() {
+		super.onPreExecute();
 	}
 	
 	public HttpResponse sendJSONObject(String uri, String json){
@@ -120,33 +147,6 @@ public class HttpRequestWithEntity extends  AsyncTask<String, Void, Void> {
 			status = Def.NETWORK_ERROR;
 		}
 		return status;*/ 
-	}
-	
-	@Override
-	protected Void doInBackground(String... params) {
-		if(params == null)
-			return null;
-		
-		System.out.println("Sending... " + params[0]);
-		String json = params[0]; 
-		
-		response = sendJSONObject(jsonUrl, json);
-		System.out.println("Response: " + response.getStatusLine());
-		
-		return null;
-	}
-	
-	/**
-	 * Before starting background thread Show Progress Dialog
-	 * */
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-	}
-	
-	@Override
-	protected void onPostExecute(Void result){
-		super.onPostExecute(result);
 	}
 
 }

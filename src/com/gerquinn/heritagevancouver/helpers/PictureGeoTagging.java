@@ -22,20 +22,39 @@ public class PictureGeoTagging {
 	public PictureGeoTagging() {
 	}
 	
+	/**
+	 * Change the Lat and Long values from DMS to Degrees
+	 */
+	public double convertToDegree(String stringDMS){
+		double result = 0.0;
+		String[] DMS = stringDMS.split(",",3);
+		
+		String[] stringD = DMS[0].split("/", 2);
+		double D0 = Double.valueOf(stringD[0]);
+		double D1 = Double.valueOf(stringD[1]);
+		double doubleD = D0/D1;
+		
+		String[] stringM = DMS[1].split("/", 2);
+		double M0 = Double.valueOf(stringM[0]);
+		double M1 = Double.valueOf(stringM[1]);
+		double doubleM = M0/M1;
+		
+		String[] stringS = DMS[2].split("/", 2);
+		double S0 = Double.valueOf(stringS[0]);
+		double S1 = Double.valueOf(stringS[1]);
+		double doubleS = S0/S1;
+		
+		result = (doubleD + (doubleM/60) + (doubleS/3600));
+		
+		return result;
+	}
+
 	public double getImgLatitude() {
 		return imgLatitude;
 	}
 
-	public void setImgLatitude(double imgLatitude) {
-		this.imgLatitude = imgLatitude;
-	}
-
 	public double getImgLongitude() {
 		return imgLongitude;
-	}
-
-	public void setImgLongitude(double imgLongitude) {
-		this.imgLongitude = imgLongitude;
 	}
 
 	/**
@@ -56,6 +75,14 @@ public class PictureGeoTagging {
 			e.printStackTrace();
 		}
 		return loc;
+	}
+
+	public void setImgLatitude(double imgLatitude) {
+		this.imgLatitude = imgLatitude;
+	}
+	
+	public void setImgLongitude(double imgLongitude) {
+		this.imgLongitude = imgLongitude;
 	}
 	
 	/**
@@ -83,33 +110,6 @@ public class PictureGeoTagging {
 	    } catch (IOException e) {
 	    	Log.e("PictureActivity", e.getLocalizedMessage());
 	    }
-	}
-	
-	/**
-	 * Change the Lat and Long values from DMS to Degrees
-	 */
-	public double convertToDegree(String stringDMS){
-		double result = 0.0;
-		String[] DMS = stringDMS.split(",",3);
-		
-		String[] stringD = DMS[0].split("/", 2);
-		double D0 = Double.valueOf(stringD[0]);
-		double D1 = Double.valueOf(stringD[1]);
-		double doubleD = D0/D1;
-		
-		String[] stringM = DMS[1].split("/", 2);
-		double M0 = Double.valueOf(stringM[0]);
-		double M1 = Double.valueOf(stringM[1]);
-		double doubleM = M0/M1;
-		
-		String[] stringS = DMS[2].split("/", 2);
-		double S0 = Double.valueOf(stringS[0]);
-		double S1 = Double.valueOf(stringS[1]);
-		double doubleS = S0/S1;
-		
-		result = (doubleD + (doubleM/60) + (doubleS/3600));
-		
-		return result;
 	}
 
 }
