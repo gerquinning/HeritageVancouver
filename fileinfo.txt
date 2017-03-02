@@ -1,5 +1,0 @@
-{
-	"filename" : "IMG_BLALALAMultiBla.jpg",
-	"lat" : "49.99999"
-	"lon": "-123.876543"
-}

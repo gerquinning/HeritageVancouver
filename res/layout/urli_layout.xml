@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.gerquinn.heritagevancouver.view.UrlImageView 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-  	android:id="@+id/thumbnail"
-    android:layout_width="80dp"
-    android:layout_height="53dp"
-    android:layout_gravity="left"
-    android:layout_marginLeft="5dp"
-    android:scaleType="fitXY" />
