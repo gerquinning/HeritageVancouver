@@ -2,6 +2,8 @@ package com.gerquinn.heritagevancouver.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,23 +12,35 @@ import android.widget.Toast;
 
 import com.gerquinn.heritagevancouver.R;
 import com.gerquinn.heritagevancouver.database.DatabaseHandler;
+import com.gerquinn.heritagevancouver.helpers.ReactiveHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -47,12 +61,23 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     public ArrayList<String> buildingList;
 
+    public  Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        Boolean isInternet = isInternetAvailable();
+        Boolean isInternet = haveNetworkConnection();
         final Intent intent = new Intent(this, MainActivity.class);
+        context = this;
+
+        final ArrayList<String> arrayList = new ArrayList<String>();
+        arrayList.add("all_buildings");
+        arrayList.add("carrall_street_tour");
+        arrayList.add("chinatown_tour");
+        arrayList.add("japantown");
+        arrayList.add("west_hastings_tour");
 
         if(isInternet) {
 
@@ -64,7 +89,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                 @Override
                 public void onNext(String s) {
-                    Log.d("RXResult", s);
+                    Log.d("RESULT", s);
                 }
 
                 @Override
@@ -79,24 +104,85 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             };
 
-            Observable observable = Observable.create(new ObservableOnSubscribe<String>() {
+            /*Observable observable = Observable.create(new ObservableOnSubscribe<String>() {
 
                 @Override
                 public void subscribe(ObservableEmitter<String> e) throws Exception {
-
+                    Log.d("SUBSCRIBE", e.toString());
                     getBuildings();
                 }
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
 
-            observable.subscribe(observer);
-            /*observable.subscribe(new Consumer<String>() {
+            observable.subscribe(observer);*/
+
+
+            /*Observable<String> observable = Observable.fromIterable(arrayList).create(new ObservableOnSubscribe<String>() {
+
                 @Override
-                public void accept(@NonNull String s) throws Exception {
-                    Log.d("RXResult", "The result from this inner class action is: " + s);
+                public void subscribe(ObservableEmitter<String> e) throws Exception {
+
+                    for(int i = 0; i <= arrayList.size() - 1; i++) {
+                        String str = getBuildings(arrayList.get(i));
+                    }
+                    e.onComplete();
+                    Log.d("SUBSCRIBE", e.toString());
                 }
-            });*/
+            })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread());*/
+
+            ReactiveHelper reactiveHelper = new ReactiveHelper();
+            Observable<String> observable = reactiveHelper.createObservableFromIterable(arrayList, context);
+
+            observable.subscribe(observer);
+
+        /*Flowable flowable = Flowable.fromArray(arrayList).create(new FlowableOnSubscribe() {
+            @Override
+            public void subscribe(FlowableEmitter e) throws Exception {
+                for(int i = 0; i <= arrayList.size() - 1; i++) {
+                    Log.d("SUBSCRIBE", arrayList.get(i));
+                    //e.onNext(arrayList.get(i));
+                    String str = getBuildings(arrayList.get(i));
+                }
+                //e.onComplete();
+            }
+        }, BackpressureStrategy.BUFFER)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+        Disposable disposable = flowable.subscribe(new Consumer<String>() {
+            @Override
+            public void accept(@NonNull String s) throws Exception {
+                Log.d("RXResult", s);
+            }
+        });*/
+        /*.subscribeWith(new DisposableSubscriber<String>() {
+
+                    @Override
+                    public void onNext(String s) {
+                        try {
+                            String str = getBuildings(s);
+                            Log.d("RESULT", str);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("RXResult", s);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        t.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });*/
+
         }else {
 
             Context context = getApplicationContext();
@@ -105,6 +191,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
+
+            findViewById(R.id.progressBar).setVisibility(View.GONE);
+            startActivity(intent);
         }
 
     }
@@ -124,24 +213,52 @@ public class SplashScreenActivity extends AppCompatActivity {
 		return true;
 	}*/
 
-    private String getBuildings() throws IOException, JSONException {
+    private String getBuildings(final String tableName) throws IOException, JSONException {
 
-        OkHttpClient client = new OkHttpClient();
-        Response response = client.newCall(new Request.Builder().url(url_all_buildings+ "?tableName=" + TABLE_NAME).build()).execute();
 
-        if(response.isSuccessful()) {
+                OkHttpClient client = new OkHttpClient();
+                Log.d("TABLE NAME", tableName);
+                Response response = null;
+                try {
+                    response = client.newCall(new Request.Builder().url(url_all_buildings+ "?tableName=" + tableName).build()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            String resStr = response.body().string();
+                if(response.isSuccessful()) {
 
-            JSONObject JObject = new JSONObject( resStr );
-            JSONArray JArray = JObject.getJSONArray("buildings");
+                    String resStr = null;
+                    try {
+                        resStr = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            DatabaseHandler dbHandler = new DatabaseHandler(this);
-            dbHandler.createTable(TABLE_NAME, JArray);
+                    JSONObject JObject = new JSONObject( resStr );
+                    JSONArray JArray = JObject.getJSONArray("buildings");
+                    Log.d("JSONARRAY", JArray.toString());
 
-            return resStr;
+                    DatabaseHandler dbHandler = new DatabaseHandler(context);
+                    dbHandler.createTable(tableName, JArray);
+                }
+                return "";
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-        return "";
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     public boolean isInternetAvailable() {

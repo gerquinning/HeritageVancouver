@@ -64,10 +64,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.delete(tableName, null,null);
         }else {
 
-            String CREATE_TABLE = "CREATE TABLE " + tableName + "("
-                    + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ADDRESS + " TEXT," + KEY_BUILDING_NAME + " TEXT,"
-                    + KEY_LATITUDE + " DOUBLE," + KEY_LONGITUDE + " DOUBLE," + KEY_BUILDING_TYPE + " TEXT," + KEY_BUILDING_AREA + " TEXT )";
+            String CREATE_TABLE;
 
+            if(tableName == "all_buildings") {
+                CREATE_TABLE = "CREATE TABLE " + tableName + "("
+                        + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ADDRESS + " TEXT," + KEY_BUILDING_NAME + " TEXT,"
+                        + KEY_LATITUDE + " DOUBLE," + KEY_LONGITUDE + " DOUBLE," + KEY_BUILDING_TYPE + " TEXT," + KEY_BUILDING_AREA + " TEXT )";
+            }else {
+                CREATE_TABLE = "CREATE TABLE " + tableName + "("
+                        + KEY_ID + " INTEGER PRIMARY KEY," + KEY_ADDRESS + " TEXT," + KEY_BUILDING_NAME + " TEXT,"
+                        + KEY_LATITUDE + " DOUBLE," + KEY_LONGITUDE + " DOUBLE," + KEY_BUILDING_TYPE + " TEXT,"
+                        + KEY_BUILDING_YEAR + " TEXT,"  + KEY_DESCRIPTION + " TEXT," + KEY_IMAGE_URL + " TEXT,"
+                        + KEY_THUMB_URL + " TEXT )";
+            }
+
+            Log.d("TABLE CREATE", CREATE_TABLE);
             db.execSQL(CREATE_TABLE);
         }
 
@@ -87,12 +98,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-            values.put(KEY_ADDRESS, jsonObject.optString("address")); //Building Address
-            values.put(KEY_BUILDING_NAME, jsonObject.optString("building_name")); //Building Name
-            values.put(KEY_LATITUDE, jsonObject.optString("latitude")); //Building Latitude
-            values.put(KEY_LONGITUDE, jsonObject.optString("longitude")); //Building Longitude
-            values.put(KEY_BUILDING_TYPE, jsonObject.optString("building_type")); //Building Description
-            values.put(KEY_BUILDING_AREA, jsonObject.optString("area")); //Building Description
+            values.put(KEY_ADDRESS, jsonObject.optString(KEY_ADDRESS)); //Building Address
+            values.put(KEY_BUILDING_NAME, jsonObject.optString(KEY_BUILDING_NAME)); //Building Name
+            values.put(KEY_LATITUDE, jsonObject.optString(KEY_LATITUDE)); //Building Latitude
+            values.put(KEY_LONGITUDE, jsonObject.optString(KEY_LONGITUDE)); //Building Longitude
+            values.put(KEY_BUILDING_TYPE, jsonObject.optString(KEY_BUILDING_TYPE)); //Building Type
+
+            if(tableName == "all_buildings") {
+                values.put(KEY_BUILDING_AREA, jsonObject.optString(KEY_BUILDING_AREA)); //Building Area
+            }else {
+                values.put(KEY_BUILDING_YEAR, jsonObject.optString(KEY_BUILDING_YEAR)); //Building Year
+                values.put(KEY_DESCRIPTION, jsonObject.optString(KEY_DESCRIPTION)); //Building Latitude
+                values.put(KEY_IMAGE_URL, jsonObject.optString(KEY_IMAGE_URL)); //Building Image URL
+                values.put(KEY_THUMB_URL, jsonObject.optString(KEY_THUMB_URL)); //Building Image URL
+            }
 
             // Inserting Row
             db.insert(tableName, null, values);
@@ -100,13 +119,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         Log.d("TABLE LENGTH", " " + jsonArray.length());
         //String tableResults = getTableAsString(db, tableName);
-        int tableRowCount = getProfilesCount(db, tableName);
+        int tableRowCount = getProfilesCount(tableName);
         Log.d("TABLE RESULTS:", "There are " + tableRowCount + " rows");
 
         db.close();
     }
 
-    private boolean isTableExists(String tableName, boolean openDb) {
+    public boolean isTableExists(String tableName, boolean openDb) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -152,7 +171,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return tableString;
     }
 
-    private int getProfilesCount(SQLiteDatabase db, String tableName) {
+    public int getProfilesCount(String tableName) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
         String countQuery = "SELECT  * FROM " + tableName;
         Cursor cursor = db.rawQuery(countQuery, null);
         int cnt = cursor.getCount();
