@@ -56,11 +56,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     public String TABLE_NAME = "all_buildings";
 
     private Subscription subscription;
-
-    private  String resStr;
-
+    private Observer<String> observer;
+    private Observable<String> observable;
     public ArrayList<String> buildingList;
-
     public  Context context;
 
     @Override
@@ -81,7 +79,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         if(isInternet) {
 
-            Observer<String> observer = new Observer<String>() {
+            observer = new Observer<String>() {
                 @Override
                 public void onSubscribe(Disposable d) {
 
@@ -104,84 +102,10 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             };
 
-            /*Observable observable = Observable.create(new ObservableOnSubscribe<String>() {
-
-                @Override
-                public void subscribe(ObservableEmitter<String> e) throws Exception {
-                    Log.d("SUBSCRIBE", e.toString());
-                    getBuildings();
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());
-
-            observable.subscribe(observer);*/
-
-
-            /*Observable<String> observable = Observable.fromIterable(arrayList).create(new ObservableOnSubscribe<String>() {
-
-                @Override
-                public void subscribe(ObservableEmitter<String> e) throws Exception {
-
-                    for(int i = 0; i <= arrayList.size() - 1; i++) {
-                        String str = getBuildings(arrayList.get(i));
-                    }
-                    e.onComplete();
-                    Log.d("SUBSCRIBE", e.toString());
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread());*/
-
             ReactiveHelper reactiveHelper = new ReactiveHelper();
-            Observable<String> observable = reactiveHelper.createObservableFromIterable(arrayList, context);
+            observable = reactiveHelper.createObservableFromIterable(arrayList, context);
 
             observable.subscribe(observer);
-
-        /*Flowable flowable = Flowable.fromArray(arrayList).create(new FlowableOnSubscribe() {
-            @Override
-            public void subscribe(FlowableEmitter e) throws Exception {
-                for(int i = 0; i <= arrayList.size() - 1; i++) {
-                    Log.d("SUBSCRIBE", arrayList.get(i));
-                    //e.onNext(arrayList.get(i));
-                    String str = getBuildings(arrayList.get(i));
-                }
-                //e.onComplete();
-            }
-        }, BackpressureStrategy.BUFFER)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-        Disposable disposable = flowable.subscribe(new Consumer<String>() {
-            @Override
-            public void accept(@NonNull String s) throws Exception {
-                Log.d("RXResult", s);
-            }
-        });*/
-        /*.subscribeWith(new DisposableSubscriber<String>() {
-
-                    @Override
-                    public void onNext(String s) {
-                        try {
-                            String str = getBuildings(s);
-                            Log.d("RESULT", str);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Log.d("RXResult", s);
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });*/
 
         }else {
 
@@ -201,9 +125,9 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        /*if(subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
-        }*/
+        if(subscription != null) {
+            subscription.cancel();
+        }
     }
 
 	/*@Override
@@ -213,50 +137,22 @@ public class SplashScreenActivity extends AppCompatActivity {
 		return true;
 	}*/
 
-    private String getBuildings(final String tableName) throws IOException, JSONException {
-
-
-                OkHttpClient client = new OkHttpClient();
-                Log.d("TABLE NAME", tableName);
-                Response response = null;
-                try {
-                    response = client.newCall(new Request.Builder().url(url_all_buildings+ "?tableName=" + tableName).build()).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if(response.isSuccessful()) {
-
-                    String resStr = null;
-                    try {
-                        resStr = response.body().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    JSONObject JObject = new JSONObject( resStr );
-                    JSONArray JArray = JObject.getJSONArray("buildings");
-                    Log.d("JSONARRAY", JArray.toString());
-
-                    DatabaseHandler dbHandler = new DatabaseHandler(context);
-                    dbHandler.createTable(tableName, JArray);
-                }
-                return "";
-    }
-
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null) { // connected to the internet
+            if (netInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                haveConnectedWifi = true;
+            } else if (netInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to the mobile provider's data plan
+                haveConnectedMobile = true;
+            }
+        } else {
+            return  false;
         }
         return haveConnectedWifi || haveConnectedMobile;
     }

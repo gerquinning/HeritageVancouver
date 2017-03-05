@@ -7,15 +7,26 @@ import com.gerquinn.heritagevancouver.database.DatabaseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,13 +48,13 @@ public class ReactiveHelper {
 
         this.context = context;
 
-        Observable<String> observable = Observable.fromIterable(arrayList).create(new ObservableOnSubscribe<String>() {
+        return Observable.fromIterable(arrayList).create(new ObservableOnSubscribe<String>() {
 
             @Override
             public void subscribe(ObservableEmitter<String> e) throws Exception {
 
                 for(int i = 0; i <= arrayList.size() - 1; i++) {
-                    String str = getBuildings(arrayList.get(i));
+                    getRemoteDatabase(arrayList.get(i));
                 }
                 e.onComplete();
                 Log.d("SUBSCRIBE", e.toString());
@@ -51,11 +62,46 @@ public class ReactiveHelper {
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-
-        return  observable;
     }
 
-    private String getBuildings(String tableName) throws IOException, JSONException {
+    public Subscriber createFlowableFromArray(final ArrayList<String> arrayList) {
+
+        return Flowable.fromArray(arrayList).create(new FlowableOnSubscribe() {
+            @Override
+            public void subscribe(FlowableEmitter e) throws Exception {
+                for(int i = 0; i <= arrayList.size() - 1; i++) {
+                    Log.d("SUBSCRIBE", arrayList.get(i));
+                    getRemoteDatabase(arrayList.get(i));
+                }
+                //e.onComplete();
+            }
+        }, BackpressureStrategy.BUFFER)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new Subscriber<String>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void getRemoteDatabase(String tableName) throws IOException, JSONException {
 
         OkHttpClient client = new OkHttpClient();
         Response response = client.newCall(new Request.Builder().url(URL_DATABASE+ "?tableName=" + tableName).build()).execute();
@@ -79,8 +125,6 @@ public class ReactiveHelper {
                 }
             }
 
-            return resStr;
         }
-        return "";
     }
 }

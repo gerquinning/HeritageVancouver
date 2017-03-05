@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/descriptionScroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#454441"
+    android:scrollbars="vertical">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/WalkingTourTitle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textColor="@drawable/white"
+            android:layout_marginLeft="5dip"
+            android:layout_marginBottom="5dip"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/westHastingsImage"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="#1f2021"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/west_hastings"
+            android:src="@drawable/west_hastings" />
+
+        <ImageView
+            android:id="@+id/japantownImage"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="#1f2021"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/japantown"
+            android:src="@drawable/japantown" />
+
+        <ImageView
+            android:id="@+id/chinatownImage"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="#1f2021"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/chinatown"
+            android:src="@drawable/chinatown" />
+
+        <ImageView
+            android:id="@+id/carrallStreetImage"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="#1f2021"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/carrall_street"
+            android:src="@drawable/carrall_street" />
+
+        <ImageView
+            android:id="@+id/strathconaImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="#1f2021"
+            android:contentDescription="@string/strathcona"
+            android:src="@drawable/strathcona_markets" />
+
+        <ImageView
+            android:id="@+id/molehillImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="#1f2021"
+            android:contentDescription="@string/molehill"
+            android:src="@drawable/mole_hill" />
+
+    </LinearLayout>
+</ScrollView>
